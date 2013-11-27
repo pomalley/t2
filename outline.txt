@@ -1,0 +1,22 @@
+Outline of t2 aka tasker 2.
+
+Basically a task management system.
+A task object has (*=required):
+title/name*
+description
+parent
+date
+completed
+category (not just parent?)
+link(s) (in description?)
+media / attachments
+comments (or multiple descriptions?)
+
+Views:
+For a task:
+--Full view (includes partial views of parents/children)
+--Partial views: title only; title, date, completed, category
+--Chain: partial view of all ancestors
+Editing a task:
+Basic edit page for full-blown single task editing
+
