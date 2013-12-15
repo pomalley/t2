@@ -10,10 +10,10 @@ class TasksController < ApplicationController
     # if we have parent_id, set it
     if @task.save
       flash[:succes] = "Task created!"
-      redirect_to root_url
+      redirect_to request.referer
     else
       flash[:error] = "Error: task invalid."
-      redirect_to root_url
+      redirect_to request.referer
     end
   end
   
@@ -23,7 +23,7 @@ class TasksController < ApplicationController
     else
       flash[:error] = "Error: task unable to be deleted."
     end
-    redirect_to request.referrer
+    redirect_to request.referer
   end
   
   def show
