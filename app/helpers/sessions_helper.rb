@@ -34,8 +34,8 @@ module SessionsHelper
     session.delete(:return_to)
   end
 
-  def store_location
-    session[:return_to] = request.url if request.get?
+  def store_location(loc = nil)
+    session[:return_to] = loc || (request.url if request.get?)
   end
   
   def current_user?(user)

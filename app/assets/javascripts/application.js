@@ -15,3 +15,25 @@
 //= require bootstrap
 //= require turbolinks
 //= require_tree .
+//= require editable/bootstrap2-editable
+//= require editable/rails
+//= require moment.min
+
+
+var ready = function() {
+  //alert("js ran!");
+  //$.fn.editable.defaults.mode = 'inline';
+  $(".editable").editable( {
+    error: function (response, newValue) {
+        var obj = JSON.parse(response.responseText);
+        var s = "";
+        for (var o in obj.errors) {
+            s += o + ": " + obj.errors[o];
+        }
+        return s;
+    }
+  });
+};
+
+$(document).ready(ready);
+$(document).on('page:load', ready);

@@ -1,0 +1,9 @@
+<% tree.each do |k, v| %>
+  <i><%= k.depth - root_depth %></i>
+  &gt; <%= link_to k.title, task_path(k), class: "btn" %>
+  <% if v.empty? %>
+    <br />
+  <% else %>
+    <%= render "shared/task_tree", tree: v %>
+  <% end %>
+<% end %>

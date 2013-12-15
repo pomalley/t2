@@ -8,8 +8,8 @@ gem 'bcrypt-ruby', '3.1.2'
 gem 'faker', '1.1.2'
 gem 'will_paginate', '3.0.4'
 gem 'bootstrap-will_paginate', '0.0.9'
-
-gem 'rails', '4.0.1'
+gem 'ancestry', '~> 2.0.0'
+gem 'x-editable-rails'
 
 group :development, :test do
   gem 'pg', '0.15.1'

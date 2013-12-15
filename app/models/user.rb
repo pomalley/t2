@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
                                      class_name:  "Relationship",
                                      dependent:   :destroy
     has_many :followers, through: :reverse_relationships, source: :follower
+    
+    has_many :tasks, dependent: :destroy
 
     before_save { self.email = email.downcase }
     before_create :create_remember_token
@@ -27,6 +29,10 @@ class User < ActiveRecord::Base
     
     def feed
       Micropost.from_users_followed_by(self)
+    end
+    
+    def task_list
+      tasks.roots
     end
     
     def following?(other_user)

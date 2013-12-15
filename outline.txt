@@ -5,7 +5,7 @@ A task object has (*=required):
 title/name*
 description
 parent
-date
+due date
 completed
 category (not just parent?)
 link(s) (in description?)

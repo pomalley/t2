@@ -14,4 +14,10 @@ FactoryGirl.define do
     content "Lorem ipsum"
     user
   end
+  
+  factory :task do
+    title "Lorem Taskum"
+    description "Dolor this and that amet"
+    user
+  end
 end
