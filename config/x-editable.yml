@@ -1,0 +1,5 @@
+# see: https://github.com/werein/x-editable-rails
+class_options:
+  Task:
+    description:
+      type: textarea

@@ -3,13 +3,13 @@ class TasksController < ApplicationController
   before_action :signed_in_user
   before_action :correct_user, only: [:destroy, :show, :update, :edit]
   
-  respond_to :html, :json
+  respond_to :html, :json, :js
 
   def create
     @task = current_user.tasks.build(task_params)
     # if we have parent_id, set it
     if @task.save
-      flash[:succes] = "Task created!"
+      flash[:success] = "Task created!"
       redirect_to request.referer
     else
       flash[:error] = "Error: task invalid."
@@ -36,11 +36,13 @@ class TasksController < ApplicationController
   
   def update
     success = @task.update_attributes(task_params)
+    @partial = params[:form_layout]
+    @id = params[:form_id]
     respond_with(@task) do |format|
       format.html do
         success ? flash[:success] = "Updated"
                 : flash[:error] = "Error: unable to update"
-        redirect_back_or @task
+        redirect_back_or :back
       end
     end
   end

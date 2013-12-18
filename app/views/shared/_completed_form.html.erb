@@ -1,0 +1,16 @@
+<%= form_for(task, html: {class: "completed", id: "completed_form_#{task.id}"}, 
+             remote: true ) do |f| %>
+  <% if task.completed %>
+    <%= f.hidden_field :completed, value: false %>
+    <%= button_tag(class: "btn btn-xs btn-primary", type: "submit") do
+      '<span class="glyphicon glyphicon-check"></span>'.html_safe
+    end %>
+  <% else %>
+    <%= f.hidden_field :completed, value: true %>
+    <%= button_tag(class: "btn btn-xs btn-info", type: "submit") do
+      '<span class="glyphicon glyphicon-unchecked"></span>'.html_safe
+    end %>
+  <% end %>
+  <%= hidden_field_tag "form_id", "completed_form_#{task.id}" %>
+  <%= hidden_field_tag "form_layout", "shared/completed_form" %>
+<% end %>

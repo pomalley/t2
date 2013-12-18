@@ -1,42 +1,58 @@
 <span class="row">
 <% task.ancestors(from_depth: -4).each do |t| %>
-  <%= link_to t.title, task_path(t), class: "btn" %> &gt;
+  <%= link_to t.title, task_path(t), class: "btn btn-default" %> &gt;
 <% end %>
 </span>
 
-<h3 class="title"><%= editable task, :title %></h3>
-<div class="row-fluid">
-<span class="span2">
-  <%= editable task, :completed, source: ["Completed", "Pending"] %>
+<div class="container task">
+
+<div class="row"><h3 class="title col-md-12">
+  <%= editable task, :title %>
+</h3></div>
+
+<div class="row task header">
+<span class="col-md-2">Completed?</span>
+<span class="col-md-4">Description</span>
+<span class="col-md-4">Due Date</span>
+</div>
+<div class="row task">
+<span class="col-md-2">
+  <%= render "shared/completed_form", task: task %>
 </span>
-<span class="span4">
+<span class="col-md-4">
   <%= editable task, :description %>
 </span>
 
-<span class="span2">
+<span class="col-md-4">
   <%= editable task, :due_date, type: "combodate", 
                 format: "YYYY-MM-DD HH:MM:ss",
                 template: "YYYY / MM / DD  HH:mm:ss" %>
 </span>
 
-<span class="span1 pull-right">
+<span class="col-md-1 pull-right">
 <% if current_user?(task.user) %>
   <%= link_to "delete", task, method: :delete,
                                    data: { confirm: "You sure?" },
                                    title: task.title,
-                                   class: "btn btn-inverse" %>
+                                   class: "btn btn-warning" %>
 <% end %>
 </span>
 </div>
-
-<% task.children.limit(4).each_with_index do |t, i| %>
-  <span class="row"><span class="pull-right">
-    &gt; <%= i == 3 ? "..." : link_to(t.title, task_path(t), class: "btn") %>
-  </span></span>
-<% end %>
+</div>
 
 <div class="row">
-<aside class="span4">
-  <%= render "shared/task_form", task: task.children.build %>
-</aside>
+  <aside class="col-md-4">
+    <%= render "shared/task_form", task: task.children.build, 
+               placeholder: "New child task..." %>
+  </aside>
+  <div class="col-md-4 pull-right">
+  <% task.children.each_with_index do |t, i| %>
+    <span class="row"><span class="pull-right" style="display: inline">
+      &gt; <%= link_to(t.title, task_path(t), 
+                    class: "btn btn-default btn-sm childlink") %>
+    </span></span>
+  <% end %>
+</div>
+
+
 </div>

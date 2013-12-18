@@ -1,18 +1,58 @@
 <li id="<%= task_list_item.id %>">
-  <%= editable task_list_item, :completed, source: ["Completed", "Pending"] %>
-  <span class="title"><%= link_to task_list_item.title, task_list_item %></span>
+  <div class="list_item_background
+  <% if task_list_item.children.any? %>
+    has_children
+  <% end %>
+  ">
+  <%= render "shared/completed_form", task: task_list_item %>
+
+  <% if task_list_item.description %>
+    <%= link_to \
+        '<span class="glyphicon glyphicon-chevron-right"></span>'.html_safe,
+        task_list_item, title: "view description", rel: "tooltip", 
+        :class => "description_link", 
+        :id => "#{task_list_item.id}_description",
+        data: {alt: 
+        "<span class='glyphicon glyphicon-chevron-down'></span>".html_safe
+        } %>
+  <% end %>
+
+  <span class="title">
+    <%= link_to task_list_item.title, task_list_item %>
+  </span>
+
   <% if task_list_item.due_date %>
     <span class="timestamp">
       Due <%= time_ago_in_words(task_list_item.due_date) %> <%= (task_list_item.due_date >= Time.now) ? "from now" : "ago" %>
     </span>
   <% else %>
-    <span class="muted">(no due date)</span>
+    <span class="text-muted">(no due date)</span>
   <% end %>
+
   <% if current_user?(task_list_item.user) %>
-      <%= link_to "[edit]", [:edit, task_list_item] %>
-      <%= link_to "[delete]", task_list_item, method: :delete,
-                                     data: { confirm: "You sure?" },
-                                     title: task_list_item.title %>
+      <%= link_to \
+            '<span class="glyphicon glyphicon-edit"></span>'.html_safe, 
+            [:edit, task_list_item], title: "edit", rel: "tooltip" %>
+      <%= link_to \
+            '<span class="glyphicon glyphicon-remove"></span>'.html_safe,
+            task_list_item, method: :delete, title: "delete",
+            data: { confirm: "You sure?" }, rel: "tooltip" %>
+      <%= link_to \
+            '<span class="glyphicon glyphicon-plus"></span>'.html_safe, 
+            task_list_item, :class => "new_child_link", 
+            title: "new child task", rel: "tooltip",
+            :id => "#{task_list_item.id}_child" %>
+      <div id="<%= task_list_item.id %>_description_div",
+            style="display: none;" class="description">
+            <%= editable task_list_item, :description %>
+      </div>
+      <div id="<%= task_list_item.id %>_child_form", style="display: none;">
+        <%= render "shared/task_form", task: task_list_item.children.build,
+                   placeholder: "New child task..." %>
+      </div>
   <% end %>
-  <%= render "shared/task_list", task_list: task_list_item.children %>
+  </div>
+  <div id="<%=task_list_item.id%>_children_list">
+    <%= render "shared/task_list", task_list: task_list_item.children %>
+  </div>
 </li>
