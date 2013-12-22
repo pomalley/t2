@@ -42,5 +42,17 @@ describe Task do
       its(:user) { should eq user }
     end
   end
+  
+  describe "task creation shorthand" do
+    before do
+      @task.title = "Test task completed! due:22 june 2014 desc:This is the description of the task."
+      @task.save!
+    end
+    it { should be_valid }
+    its(:completed) { should eq(true) }
+    its(:due_date) { should eq(Date.new(2014,6,22)) }
+    its(:description) { should eq("This is the description of the task.") }
+    its(:title) { should eq("Test task") }
+  end
 
 end

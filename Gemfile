@@ -10,6 +10,7 @@ gem 'will_paginate', '3.0.4'
 gem 'bootstrap-will_paginate'
 gem 'ancestry', '~> 2.0.0'
 gem 'x-editable-rails'
+gem 'chronic'
 
 group :development, :test do
   gem 'pg', '0.15.1'

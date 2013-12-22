@@ -18,7 +18,7 @@ var taskReady = function() {
         $t.html(alt);
     });
     
-    $("li").click( function (event) {
+    $(".task_list li").click( function (event) {
         if (event.target == this || 
             event.target == this.firstElementChild) {
             event.stopPropagation(); event.preventDefault();

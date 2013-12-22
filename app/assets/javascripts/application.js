@@ -23,6 +23,7 @@
 var ready = function() {
   //alert("js ran!");
   $.fn.editable.defaults.mode = 'inline';
+  $.fn.datepicker.defaults.orientation = "bottom";
   $(".editable").editable( {
     error: function (response, newValue) {
         var obj = JSON.parse(response.responseText);
@@ -31,7 +32,8 @@ var ready = function() {
             s += o + ": " + obj.errors[o];
         }
         return s;
-    }
+    },
+    datepicker: { orientation: "bottom" }
   });
 };
 

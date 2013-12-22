@@ -24,9 +24,11 @@
 </span>
 
 <span class="col-md-4">
-  <%= editable task, :due_date, type: "combodate", 
-                format: "YYYY-MM-DD HH:MM:ss",
-                template: "YYYY / MM / DD  HH:mm:ss" %>
+  <%= editable task, :due_date, type: "combodate", class: "datepicker",
+                format: "YYYY-MM-DD", template: "YYYY / MM / DD",
+                date_orientation: "bottom",
+                datepicker: {todayBtn: 'linked', orientation: 'bottom'}
+                %>
 </span>
 
 <span class="col-md-1 pull-right">
