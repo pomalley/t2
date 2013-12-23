@@ -12,6 +12,7 @@ gem 'ancestry', '~> 2.0.0'
 gem 'x-editable-rails'
 gem 'chronic'
 
+
 group :development, :test do
   gem 'pg', '0.15.1'
   gem 'rspec-rails', '2.13.1'

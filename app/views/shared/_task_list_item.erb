@@ -22,9 +22,9 @@
   </span>
 
   <% if task_list_item.due_date %>
-    <span class="timestamp">
-      Due <%= time_ago_in_words(task_list_item.due_date) %> <%= (task_list_item.due_date >= Time.now) ? "from now" : "ago" %>
-    </span>
+    <abbr class="timestamp daysfromnow" title="<%= task_list_item.due_date %>">
+      <%= task_list_item.due_date %>
+    </abbr>
   <% else %>
     <span class="text-muted">(no due date)</span>
   <% end %>

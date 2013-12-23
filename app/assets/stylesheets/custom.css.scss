@@ -182,6 +182,9 @@ div.description {
 div.list_item_background.has_children {
   font-weight: bold;
   background: $grayLighter;
+  .timestamp {
+    font-weight: normal;
+  }
 }
 
 /* Users index */
