@@ -14,12 +14,5 @@
   
   <div class="span8">
     <%= render 'follow_form' if signed_in? %>
-    <% if @user.microposts.any? %>
-      <h3>Microposts (<%= @user.microposts.count %>)</h3>
-      <ol class="microposts">
-        <%= render collection: @microposts, partial: "shared/li_wrapper", as: :object %>
-      </ol>
-      <%= will_paginate @microposts %>
-    <% end %>
   </div>
 </div>

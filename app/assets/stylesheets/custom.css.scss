@@ -175,8 +175,14 @@ div.container.task {
 
 div.description {
   margin: 5px 40px;
-  border: 1px solid black;
+  //border: 1px solid black;
   background: $grayLighter;
+  font-weight: normal;
+  text-align: left;
+  /* override bootstrap */
+  &.editable-pre-wrapped {
+    white-space: normal;
+  }
 }
 
 div.list_item_background.has_children {
@@ -200,10 +206,5 @@ div.list_item_background.has_children {
       border-bottom: 1px solid $grayLighter;
     }
   }
-}
-
-/* override bootstrap */
-.description.editable-pre-wrapped {
-  white-space: normal;
 }
 
