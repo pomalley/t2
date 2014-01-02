@@ -2,24 +2,26 @@ var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oc
 var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 var todaysDate = function() {
-    return new Date(new Date().toDateString());
+    var now = new Date();
+    return moment([now.getFullYear(), now.getMonth(), now.getDate()]);
 };
 
-var dateFromTitle = function(obj) {
-    return new Date(new Date(it.attr('title')).toDateString());
+var dateFromTitle = function(it) {
+    return moment(it.attr('title'));
+    //return new Date(new Date(it.attr('title')).toDateString());
 };
 
 var daysFromNow = function(tDate) {
     var n = (tDate - todaysDate()) / 86400000.0;
-    s = tDate.toDateString();
+    s = tDate.format("YYYY-MM-DD");
     if (n >= 7) {
-        s = months[tDate.getMonth()] + ' ' + tDate.getDate();
-        if (n > 365 || (n > 300 && tDate.getMonth() == todaysDate().getMonth())
-                    || todaysDate().getMonth() - tDate.getMonth() == 1) {
-            s = s + ' ' + tDate.getFullYear();
+        s = months[tDate.month()] + ' ' + tDate.date();
+        if (n > 365 || (n > 300 && tDate.month() == todaysDate().month())
+                    || todaysDate().month() - tDate.month() == 1) {
+            s = s + ' ' + tDate.year();
         }
     } else if (n > 1) {
-        s = days[tDate.getDay()];
+        s = days[tDate.day()];
     } else if (n == 1) {
         s = 'Tomorrow';
     } else if (n == 0) {
@@ -27,10 +29,10 @@ var daysFromNow = function(tDate) {
     } else if (n == -1) {
         s = 'Yesterday';
     } else if (n > -7) {
-        s = 'Last ' + days[tDate.getDay()];
+        s = 'Last ' + days[tDate.day()];
     } else {
-        s = months[tDate.getMonth()] + ' ' + 
-                   tDate.getDate() + ' ' + tDate.getFullYear();
+        s = months[tDate.month()] + ' ' + 
+                   tDate.date() + ' ' + tDate.year();
     }
     return s;
 };
@@ -38,7 +40,7 @@ var daysFromNow = function(tDate) {
 // to be used with $().each
 var applyDaysFromNow = function(index) {
     var t = $(this);
-    t.html( daysFromNow(new Date(t.attr('title'))) );
+    t.html( daysFromNow(dateFromTitle(t)) );
 };
 
 var taskReady = function() {
