@@ -4,7 +4,7 @@
      class="editable editable-click description"
      style="display: <%= display %>;" data-escape="false"
      title="Description" data-value="<%= task.description %>"
-     data-url="/tasks/<%= task.id %>" data-type="textarea"
+     data-url="<%= polymorphic_path task %>" data-type="textarea"
      data-placeholder="Description" data-name="description" data-model="task">
   <%= raw task.description_parsed %>
 </div>
