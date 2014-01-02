@@ -9,9 +9,9 @@ gem 'faker', '1.1.2'
 gem 'will_paginate', '3.0.4'
 gem 'bootstrap-will_paginate'
 gem 'ancestry', '~> 2.0.0'
-gem 'x-editable-rails'
+gem 'x-editable-rails', :git => 'git://github.com/werein/x-editable-rails.git'
 gem 'chronic'
-
+gem 'redcarpet'
 
 group :development, :test do
   gem 'pg', '0.15.1'

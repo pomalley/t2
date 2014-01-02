@@ -33,7 +33,19 @@ var ready = function() {
         }
         return s;
     },
-    datepicker: { orientation: "bottom" }
+    datepicker: { orientation: "bottom" },
+    success: function (response, value) {
+        console.log(response);
+        console.log(value);
+        var $t = $(this)
+        $t.attr("data-value", value);
+        console.log(this);
+        $.getJSON($(this).attr("data-url")).done(function (data) {
+            console.log("success");
+            $t.html(data["description_parsed"]);
+            $t.attr("data-parsed", data["description_parsed"]);
+        });        
+    }
   });
 };
 

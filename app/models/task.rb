@@ -12,6 +12,7 @@ class Task < ActiveRecord::Base
   
   before_validation :match_parent_user
   before_validation :process_title
+  before_save       :parse_description
   
   # this could also be acts_as_tree (aliased)
   has_ancestry({ :cache_depth => true })
@@ -50,5 +51,18 @@ class Task < ActiveRecord::Base
     
     def process_title
       self.title = _r_process_title(self.title).strip
+    end
+    
+    def parse_description
+      self.description_parsed = markdown(self.description)
+    end
+    
+    def markdown(text)
+        text ||= ""
+        renderer = Redcarpet::Render::HTML.new(
+            filter_html: true, hard_wrap: true)
+        markdown = Redcarpet::Markdown.new(renderer,
+            autolink: true, no_intra_emphasis: true, fenced_code_blocks: true)
+        markdown.render(text).html_safe
     end
 end

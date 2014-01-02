@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/werein/x-editable-rails.git
+  revision: 35a26c37ce0ec1829161e99fbb004a89df90bd1a
+  specs:
+    x-editable-rails (1.5.2)
+      railties
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -95,7 +102,7 @@ GEM
     rails_12factor (0.0.2)
       rails_serve_static_assets
       rails_stdout_logging
-    rails_serve_static_assets (0.0.1)
+    rails_serve_static_assets (0.0.2)
     rails_stdout_logging (0.0.3)
     railties (4.0.1)
       actionpack (= 4.0.1)
@@ -105,6 +112,7 @@ GEM
     rake (10.1.1)
     rdoc (3.12.2)
       json (~> 1.4)
+    redcarpet (3.0.0)
     rspec-core (2.13.1)
     rspec-expectations (2.13.0)
       diff-lcs (>= 1.1.3, < 2.0)
@@ -154,8 +162,6 @@ GEM
       multi_json (~> 1.0, >= 1.0.2)
     websocket (1.0.7)
     will_paginate (3.0.4)
-    x-editable-rails (1.5.2)
-      railties
     xpath (2.0.0)
       nokogiri (~> 1.3)
 
@@ -177,6 +183,7 @@ DEPENDENCIES
   pg (= 0.15.1)
   rails (= 4.0.1)
   rails_12factor (= 0.0.2)
+  redcarpet
   rspec-rails (= 2.13.1)
   sass-rails (= 4.0.1)
   sdoc (= 0.3.20)
@@ -184,4 +191,4 @@ DEPENDENCIES
   turbolinks (= 1.1.1)
   uglifier (= 2.1.1)
   will_paginate (= 3.0.4)
-  x-editable-rails
+  x-editable-rails!

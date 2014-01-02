@@ -28,6 +28,10 @@ class TasksController < ApplicationController
   
   def show
     @params = params
+    respond_to do |format|
+      format.html
+      format.json { render :json => @task }
+    end
   end
   
   def edit
@@ -44,6 +48,7 @@ class TasksController < ApplicationController
                 : flash[:error] = "Error: unable to update"
         redirect_back_or :back
       end
+      format.json
     end
   end
 

@@ -42,10 +42,15 @@
             task_list_item, :class => "new_child_link", 
             title: "new child task", rel: "tooltip",
             :id => "#{task_list_item.id}_child" %>
-      <div id="<%= task_list_item.id %>_description_div",
-            style="display: none;" class="description">
-            <%= editable task_list_item, :description %>
+      <div id="<%= task_list_item.id %>_description_div"
+            class="editable editable-click description"
+            style="display: none;" data-escape="false"
+            title="Description" data-value="<%= task_list_item.description %>"
+            data-url="/tasks/<%= task_list_item.id %>" data-type="textarea"
+            data-placeholder="Description" data-name="description" data-model="task">
+            <%= raw task_list_item.description_parsed %>
       </div>
+
       <div id="<%= task_list_item.id %>_child_form", style="display: none;">
         <%= render "shared/task_form", task: task_list_item.children.build,
                    placeholder: "New child task..." %>

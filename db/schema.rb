@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131220025058) do
+ActiveRecord::Schema.define(version: 20140101171354) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,13 +39,14 @@ ActiveRecord::Schema.define(version: 20131220025058) do
   create_table "tasks", force: true do |t|
     t.integer  "user_id"
     t.string   "title"
-    t.string   "description"
+    t.text     "description"
     t.date     "due_date"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "ancestry"
-    t.integer  "ancestry_depth", default: 0
-    t.boolean  "completed",      default: false
+    t.integer  "ancestry_depth",     default: 0
+    t.boolean  "completed",          default: false
+    t.text     "description_parsed"
   end
 
   add_index "tasks", ["ancestry"], name: "index_tasks_on_ancestry", using: :btree

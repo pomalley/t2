@@ -70,6 +70,7 @@ var taskReady = function() {
     });
     
     $('.daysfromnow').each(applyDaysFromNow);
+    
 };
 
 $(document).ready(taskReady);
