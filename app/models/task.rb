@@ -2,6 +2,7 @@ require 'chronic'
 
 class Task < ActiveRecord::Base
   belongs_to :user
+  
   validates :user_id, presence: true
   validates :title, presence: true, length: { maximum: 40 }
   
@@ -13,9 +14,19 @@ class Task < ActiveRecord::Base
   before_validation :match_parent_user
   before_validation :process_title
   before_save       :parse_description
+  before_save       :limit_priority
+  before_save       :set_visible
   
   # this could also be acts_as_tree (aliased)
   has_ancestry({ :cache_depth => true })
+  
+  # to get the children in order
+  acts_as_list scope: [:ancestry, :visible]
+  #acts_as_list :scope => 'ancestry = \'#{ancestry}\''
+  
+  # use ranked instead?
+  #ranks :position, with_same: [:ancestry, :visible]
+  
   
   private
     def match_parent_user
@@ -40,6 +51,12 @@ class Task < ActiveRecord::Base
         after = _r_process_title(after)
         self.completed = true
       end
+      # and for the priority
+      s, mid, after = s.partition(/\d!/i)
+      unless mid.empty?
+        after = _r_process_title(after)
+        self.priority = mid[0].to_i
+      end
       # and now for description
       s, mid, after = s.partition(/description:|desc:/i)
       unless mid.empty?
@@ -55,6 +72,18 @@ class Task < ActiveRecord::Base
     
     def parse_description
       self.description_parsed = markdown(self.description)
+    end
+    
+    def limit_priority
+      unless self.priority.nil?
+        self.priority = 1 if self.priority < 1
+        self.priority = 4 if self.priority > 4
+      end
+    end
+    
+    def set_visible
+        self.visible = self.status != "retired"
+        return true
     end
     
     def markdown(text)

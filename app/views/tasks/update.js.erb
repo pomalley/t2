@@ -1,3 +1,10 @@
 $('<%= escape_javascript("##{@id}") %>').replaceWith( 
   "<%= escape_javascript(render @partial, task: @task) %>"
 );
+
+<% if @id.starts_with? 'minimize_form' %>
+if ( <%= "!" unless @task.status == "minimized" %>
+    $("<%= "##{@task.id}_children_list" %>").is(":visible") ) {
+        $("<%= "##{@task.id}_children_list" %>").slideToggle();
+}
+<% end %> 

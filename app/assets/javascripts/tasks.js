@@ -63,6 +63,17 @@ var taskReady = function() {
         $t.html(alt);
     });
     
+    $("a.retired_link").attr("href", "#");
+    $("a.retired_link").click( function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        $('#' + this.id + "_ol").slideToggle();
+        var $t = $(this);
+        var alt = $t.data('alt');
+        $t.data('alt', $t.html());
+        $t.html(alt);
+    });
+    
     $(".task_list li").click( function (event) {
         if (event.target == this || 
             event.target == this.firstElementChild) {

@@ -59,11 +59,6 @@ h2 {
   color: $grayLight;
 }
 
-/*p {
-  font-size: 1.1em;
-  line-height: 1.7em;
-}*/
-
 
 /* header */
 
@@ -143,10 +138,19 @@ input {
 
 
 /* Tasks */
-form.completed {
+form.mini {
   display: inline;
+}
+
+form.completed {
   margin-left: 10px;
-  margin-right: 10px;
+  margin-right: 5px;
+}
+
+.form_link {
+  @extend a;
+  border: none;
+  padding: 0px;
 }
 
 form.new_task {
@@ -173,9 +177,8 @@ div.container.task {
   margin-bottom: 10px;
 }
 
-div.description {
+.description {
   margin: 5px 40px;
-  //border: 1px solid black;
   background: $grayLighter;
   font-weight: normal;
   text-align: left;
@@ -186,11 +189,32 @@ div.description {
 }
 
 div.list_item_background.has_children {
-  font-weight: bold;
   background: $grayLighter;
   .timestamp {
     font-weight: normal;
   }
+}
+
+.sortable {
+  // fix helper position bug in jquery ui sortable 
+  overflow: auto;
+}
+
+// priority
+.priority {
+    font-weight: bolder;
+}
+.priority_1 {
+    color: red;
+}
+.priority_2 {
+    color: goldenrod;
+}
+.priority_3 {
+    color: blue;
+}
+.priority_4 {
+    color: gray;
 }
 
 /* Users index */

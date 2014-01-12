@@ -1,5 +1,31 @@
-<% if task_list.any? %>
-  <ol class="task_list">
-    <%= render partial: "shared/task_list_item", collection: task_list %>
+<% active = task_list.where.not(status: "retired").order(:position, :completed, :priority,  :id) %>
+<% retired = task_list.where(status: "retired").order(:position, :completed, :priority, :id) %>
+<% params[:show_retired] == "1" ? retired_display = "block" : retired_display = "none" %>
+
+<% if active.any? %>
+  <ol class="task_list sortable">
+    <%= render partial: "shared/task_list_item", collection: active %>
   </ol>
 <% end %>
+
+<% if retired.any? %>
+  <p class="retired_header">
+    <%= pluralize retired.count, "retired item" %>
+    <% unless params[:show_retired] == "1" %>
+      <%= link_to '(show)', "?show_retired=1", title: "view description",
+            rel: "tooltip", :class => "retired_link", id: "#{id}_retired",
+            data: {alt: "(hide)"}
+      %>
+    <% else %>
+      <%= link_to '(hide)', "?show_retired=0", title: "view description",
+            rel: "tooltip", :class => "retired_link", id: "#{id}_retired", 
+            data: {alt: "(show)"}
+      %>
+    <% end %>
+  </p>
+  <ol class="task_list" style="display: <%= retired_display %>;" 
+        id="<%= "#{id}_retired_ol" %>" >
+    <%= render partial: "shared/task_list_item", collection: retired %>
+  </ol>
+<% end %>
+

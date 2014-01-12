@@ -1,0 +1,18 @@
+<%= form_for(task, html: {class: "mini", id: "retire_form_#{task.id}"}, 
+             remote: false ) do |f| %>
+  <% if task.status == "retired" %>
+    <%= f.hidden_field :status, value: "minimized" %>
+    <%= button_tag(class: "form_link", type: "submit", 
+                    title: "minimize", rel: "tooltip") do
+      '<span class="glyphicon glyphicon-eye-open"></span>'.html_safe
+    end %>
+  <% else %>
+    <%= f.hidden_field :status, value: "retired" %>
+    <%= button_tag(class: "form_link", type: "submit", 
+                    title: "retire", rel: "tooltip") do
+      '<span class="glyphicon glyphicon-eye-close"></span>'.html_safe
+    end %>
+  <% end %>
+  <%= hidden_field_tag "form_id", "retire_form_#{task.id}" %>
+  <%= hidden_field_tag "form_layout", "shared/retire_form" %>
+<% end %>

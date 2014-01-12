@@ -27,7 +27,7 @@ describe Task do
   
   describe "ancestry associations" do
     before do
-      @task.save
+      @task.save!
       @child1 = @task.children.create!(title: "Child 1")
       @child2 = @task.children.create!(title: "Child 2")
       @grandchild = @child1.children.create!(title: "Grandchild")
@@ -45,7 +45,7 @@ describe Task do
   
   describe "task creation shorthand" do
     before do
-      @task.title = "Test task completed! due:22 june 2014 desc:This is the description of the task."
+      @task.title = "Test task completed! due:22 june 2014 desc:This is the description of the task. 2!"
       @task.save!
     end
     it { should be_valid }
@@ -53,6 +53,7 @@ describe Task do
     its(:due_date) { should eq(Date.new(2014,6,22)) }
     its(:description) { should eq("This is the description of the task.") }
     its(:title) { should eq("Test task") }
+    its(:priority) { should eq(2) }
   end
 
 end

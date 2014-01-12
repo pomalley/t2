@@ -12,6 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.ui.sortable
+//= require jquery.ui.effect-highlight
 //= require bootstrap
 //= require turbolinks
 //= require_tree .
@@ -19,33 +21,68 @@
 //= require editable/rails
 //= require moment.min
 
+// for priority-class editables, convert to colored star
+var priorityDisplay = function (value, sourceData) {
+    var $t = $(this);
+    $t.attr("data-value", value);
+    $t.html('<span class="glyphicon glyphicon-star"></span>');
+    $t.removeClass('priority_1 priority_2 priority_3 priority_4');
+    $t.addClass('priority_' + $t.attr("data-value"));
+};
+// for description, pull parsed description from server and display that
+var descriptionSuccess = function (response, value) {
+    var $t = $(this);
+    $t.attr("data-value", value);
+    $.getJSON($(this).attr("data-url")).done(function (data) {
+        $t.html(data["description_parsed"]);
+        $t.attr("data-parsed", data["description_parsed"]);
+    });
+};
+// for all editables, a basic error parser
+var editableError = function(response, newValue) {
+    var obj = JSON.parse(response.responseText);
+    var s = "";
+    for (var o in obj.errors) {
+        s += o + ": " + obj.errors[o];
+    }
+    return s;
+};
 
 var ready = function() {
-  //alert("js ran!");
   $.fn.editable.defaults.mode = 'inline';
-  $.fn.datepicker.defaults.orientation = "bottom";
-  $(".editable").editable( {
-    error: function (response, newValue) {
-        var obj = JSON.parse(response.responseText);
-        var s = "";
-        for (var o in obj.errors) {
-            s += o + ": " + obj.errors[o];
-        }
-        return s;
-    },
-    datepicker: { orientation: "bottom" },
-    success: function (response, value) {
-        var $t = $(this)
-        $t.attr("data-value", value);
-        if ($t.attr("data-name") == "description") {
-            $.getJSON($(this).attr("data-url")).done(function (data) {
-                console.log("success");
-                $t.html(data["description_parsed"]);
-                $t.attr("data-parsed", data["description_parsed"]);
-            });
-        }
-    }
+  // now apply the correct editable callbacks
+  $(".editable:not(.description):not(.priority)").editable( {
+    error: editableError,
+    success: null, 
+    display: null,
   });
+  $(".editable.description").editable( {
+    error: editableError,
+    success: descriptionSuccess,
+    display: null,
+  });
+  $(".editable.priority").editable( {
+    error: editableError,
+    success: null,
+    display: priorityDisplay,
+  });
+  
+  $(".sortable").sortable( {
+    axis: 'y',
+    //start: function(event, ui) { console.log('start'); },
+    stop: function(event, ui) { ui.item.effect('highlight', {}, 2000); },
+    update: function(event, ui) { 
+      var id = ui.item.data("id");
+      var position = ui.item.index();
+      var url = ui.item.data("url");
+      $.ajax({
+        type: 'PATCH',
+        url: url,
+        datatype: 'json',
+        data: { position: position },
+      });
+    },
+  } );
 };
 
 $(document).ready(ready);

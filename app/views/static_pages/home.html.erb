@@ -7,8 +7,7 @@
     </aside>
     <div class="col-md-8">
       <h3>Tasks</h3>
-      <%= render 'shared/task_list', task_list: @task_list %>
-      <%= will_paginate(@task_list) if @task_list.any? %>
+      <%= render 'shared/task_list', task_list: @task_list, id: "root" %>
     </div>
   </div>
 <% else %>

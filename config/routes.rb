@@ -4,7 +4,11 @@ T2::Application.routes.draw do
       get :following, :followers
     end
   end
-  resources :tasks
+  resources :tasks do
+    member do
+      patch :move, :sort
+    end
+  end
   resources :sessions, only: [:new, :create, :destroy]
   resources :relationships, only: [:create, :destroy]
   root  'static_pages#home'

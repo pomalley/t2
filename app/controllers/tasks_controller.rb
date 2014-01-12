@@ -1,7 +1,8 @@
 class TasksController < ApplicationController
 
   before_action :signed_in_user
-  before_action :correct_user, only: [:destroy, :show, :update, :edit]
+  before_action :correct_user, only:
+    [:destroy, :show, :update, :edit, :move, :sort]
   
   respond_to :html, :json, :js
 
@@ -51,11 +52,26 @@ class TasksController < ApplicationController
       format.json
     end
   end
+  
+  def move
+    if ['move_lower', 'move_higher', 'move_to_bottom',
+        'move_to_top'].include? (params[:method])
+      @task.send(params[:method])
+    end
+    redirect_to request.referer
+  end
+  
+  def sort
+    if params[:position] =~ /^\d+$/
+      @task.insert_at(params[:position].to_i + 1)
+    end
+    render nothing: true
+  end
 
   private
     def task_params
       params.require(:task).permit(:title, :description, :completed, 
-                    :due_date, :parent_id)
+                    :due_date, :parent_id, :priority, :status)
     end
   
     def correct_user

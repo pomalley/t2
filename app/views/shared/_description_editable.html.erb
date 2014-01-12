@@ -1,10 +1,10 @@
 <% display = local_assigns.fetch :display, "inline-block" %>
 
-<div id="<%= task.id %>_description_div"
-     class="editable editable-click description"
-     style="display: <%= display %>;" data-escape="false"
+<div id="<%= task.id %>_description_div" style="display: <%= display %>;" >
+<span class="editable editable-click description" data-escape="false" 
      title="Description" data-value="<%= task.description %>"
      data-url="<%= polymorphic_path task %>" data-type="textarea"
-     data-placeholder="Description" data-name="description" data-model="task">
+     data-placeholder="Description" data-name="description" data-model="task" >
   <%= raw task.description_parsed %>
+</span>
 </div>

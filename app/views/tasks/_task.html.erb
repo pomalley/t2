@@ -11,24 +11,34 @@
 </h3></div>
 
 <div class="row task header">
-<span class="col-md-2">Completed?</span>
+<span class="col-md-1">Completed?</span>
 <span class="col-md-4">Description</span>
-<span class="col-md-4">Due Date</span>
+<span class="col-md-3">Due Date</span>
+<span class="col-md-1">Priority</span>
+<span class="col-md-1">Status</span>
 </div>
 <div class="row task">
-<span class="col-md-2">
+<span class="col-md-1">
   <%= render "shared/completed_form", task: task %>
 </span>
 <span class="col-md-4">
   <%= render "shared/description_editable", task: task %>
 </span>
 
-<span class="col-md-4">
+<span class="col-md-3">
   <%= editable task, :due_date, type: "combodate", class: "datepicker",
                 format: "YYYY-MM-DD", template: "YYYY / MM / DD",
                 date_orientation: "bottom",
                 datepicker: {todayBtn: 'linked', orientation: 'bottom'}
                 %>
+</span>
+
+<span class="col-md-1">
+  <%= editable task, :priority, mode: 'popup', placement: 'bottom' %>
+</span>
+
+<span class="col-md-1">
+  <%= editable task, :status, mode: 'popup', placement: 'bottom' %>
 </span>
 
 <span class="col-md-1 pull-right">

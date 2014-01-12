@@ -3,3 +3,17 @@ class_options:
   Task:
     description:
       type: textarea
+    priority:
+      type: select
+      source:
+        - 1
+        - 2
+        - 3
+        - 4
+    status:
+      type: select
+      source:
+        - active
+        - minimized
+        - retired
+        

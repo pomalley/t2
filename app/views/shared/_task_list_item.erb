@@ -1,10 +1,14 @@
-<li id="<%= task_list_item.id %>">
+<li id="<%= task_list_item.id %>" data-id="<%= task_list_item.id %>"
+  data-url="<%= sort_task_path(task_list_item) %>">
   <div class="list_item_background
   <% if task_list_item.children.any? %>
     has_children
   <% end %>
   ">
+  <%#= sortable_element('test') %>
   <%= render "shared/completed_form", task: task_list_item %>
+  <%= editable task_list_item, :priority, mode: "popup", placement: "bottom",
+        class: "priority priority_#{task_list_item.priority}" %>
 
   <% if task_list_item.description %>
     <%= link_to \
@@ -41,16 +45,28 @@
             '<span class="glyphicon glyphicon-plus"></span>'.html_safe, 
             task_list_item, :class => "new_child_link", 
             title: "new child task", rel: "tooltip",
-            :id => "#{task_list_item.id}_child" %>
+            :id => "#{task_list_item.id}_child" %>      
+      <%= render "shared/minimize_form", task: task_list_item %>
+      <%= render "shared/retire_form", task: task_list_item %>
+      <%= link_to '<span class="glyphicon glyphicon-arrow-up"></span>'.html_safe,
+        move_task_path(task_list_item, method: "move_higher"), method: :patch,
+        title: "move up", rel: "tooltip" %>
+      <%= link_to '<span class="glyphicon glyphicon-arrow-down"></span>'.html_safe,
+        move_task_path(task_list_item, method: "move_lower"), method: :patch,
+        title: "move down", rel: "tooltip" %>
+      
       <%= render "shared/description_editable", task: task_list_item, display: "none" %>
 
       <div id="<%= task_list_item.id %>_child_form", style="display: none;">
         <%= render "shared/task_form", task: task_list_item.children.build,
                    placeholder: "New child task..." %>
       </div>
+
   <% end %>
   </div>
-  <div id="<%=task_list_item.id%>_children_list">
-    <%= render "shared/task_list", task_list: task_list_item.children %>
+  <div id="<%=task_list_item.id%>_children_list"
+    style="display: <%= task_list_item.status == 'active' ? 'block' : 'none' %>;" >
+    <%= render "shared/task_list", task_list: task_list_item.children,
+                id: task_list_item.id %>
   </div>
 </li>

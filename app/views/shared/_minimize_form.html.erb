@@ -1,0 +1,19 @@
+<% remote = true unless task.status == "retired" %>
+<%= form_for(task, html: {class: "mini", id: "minimize_form_#{task.id}"}, 
+             remote: remote ) do |f| %>
+  <% if task.status == "active" %>
+    <%= f.hidden_field :status, value: "minimized" %>
+    <%= button_tag(type: "submit", :class => "form_link",
+                    title: "minimize",  rel: "tooltip") do
+      '<span class="glyphicon glyphicon-resize-small"></span>'.html_safe
+    end %>
+  <% else %>
+    <%= f.hidden_field :status, value: "active" %>
+    <%= button_tag(type: "submit", :class => "form_link", 
+                    title: "activate", rel: "tooltip") do
+      '<span class="glyphicon glyphicon-resize-full"></span>'.html_safe
+    end %>
+  <% end %>
+  <%= hidden_field_tag "form_id", "minimize_form_#{task.id}" %>
+  <%= hidden_field_tag "form_layout", "shared/minimize_form" %>
+<% end %>
