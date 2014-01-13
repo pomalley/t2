@@ -63,7 +63,7 @@ class TasksController < ApplicationController
   
   def sort
     if params[:position] =~ /^\d+$/
-      @task.insert_at(params[:position].to_i + 1)
+      @task.update_attribute :position_position, params[:position].to_i
     end
     render nothing: true
   end

@@ -21,11 +21,12 @@ class Task < ActiveRecord::Base
   has_ancestry({ :cache_depth => true })
   
   # to get the children in order
-  acts_as_list scope: [:ancestry, :visible]
+  #acts_as_list scope: [:ancestry, :visible]
   #acts_as_list :scope => 'ancestry = \'#{ancestry}\''
   
   # use ranked instead?
-  #ranks :position, with_same: [:ancestry, :visible]
+  include RankedModel
+  ranks :position, with_same: [:ancestry, :visible]
   
   
   private
