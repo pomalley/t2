@@ -69,7 +69,8 @@ var ready = function() {
   
   $(".sortable").sortable( {
     axis: 'y',
-    //start: function(event, ui) { console.log('start'); },
+    handle: '.handle',
+    cursor: 'move',
     stop: function(event, ui) { ui.item.effect('highlight', {}, 2000); },
     update: function(event, ui) { 
       var id = ui.item.data("id");

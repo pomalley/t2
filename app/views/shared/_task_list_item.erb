@@ -54,6 +54,7 @@
       <%= link_to '<span class="glyphicon glyphicon-arrow-down"></span>'.html_safe,
         move_task_path(task_list_item, method: "move_lower"), method: :patch,
         title: "move down", rel: "tooltip" %>
+      <span class="handle glyphicon glyphicon-sort"></span>
       
       <%= render "shared/description_editable", task: task_list_item, display: "none" %>
 
