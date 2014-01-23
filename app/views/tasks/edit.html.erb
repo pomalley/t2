@@ -1,6 +1,12 @@
 <% provide(:title, "Edit task") %>
 <h1>Update the task</h1>
 
+<section class="flash">
+  <% flash.each do |key, value| %>
+    <div class="alert alert-<%= key %>"><%= value %></div>
+  <% end %>
+</section>
+
 <div class="row">
   <div class="span6 offset3">
     <%= form_for(@task) do |f| %>
