@@ -60,6 +60,7 @@ var ready = function() {
     error: editableError,
     success: descriptionSuccess,
     display: null,
+    toggle: 'dblclick',
   });
   $(".editable.priority").editable( {
     error: editableError,

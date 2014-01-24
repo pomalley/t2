@@ -123,6 +123,10 @@ input {
   height: auto !important;
 }
 
+form.sign-in {
+  border: 1px black;
+}
+
 #error_explanation {
   color: #f00;
   ul {
