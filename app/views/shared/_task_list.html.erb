@@ -4,7 +4,11 @@
 
 <% if active.any? %>
   <ol class="task_list sortable">
-    <%= render partial: "shared/task_list_item", collection: active %>
+    <% if id=="root" %>
+      <%= render partial: "shared/task_list_item", collection: active, spacer_template: "shared/root_spacer" %>
+    <% else %>
+      <%= render partial: "shared/task_list_item", collection: active %>
+    <% end %>
   </ol>
 <% end %>
 
