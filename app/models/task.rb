@@ -64,7 +64,9 @@ class Task < ActiveRecord::Base
         after = _r_process_title(after)
         self.description = after.strip
       end
-      return s  # i don't understand why this is unnecessary, we only want s, not mid or after??
+      # tested this: definitely _not_ unnecessary!
+      # noinspection RubyUnnecessaryReturnStatement
+      return s
     end
     
     def process_title
