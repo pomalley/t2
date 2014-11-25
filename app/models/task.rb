@@ -36,7 +36,7 @@ class Task < ActiveRecord::Base
     
     def _r_process_title(s)
       if s.strip.empty?
-        return ""
+        return ''
       end
       # look for due date clue:
       s, mid, after = s.partition(/due:/i)
@@ -49,13 +49,13 @@ class Task < ActiveRecord::Base
       # now the same for completed with what we have left
       s, mid, after = s.partition(/completed!/i)
       unless mid.empty?
-        after = _r_process_title(after)
+        _r_process_title(after)  # don't use any remnants for completed
         self.completed = true
       end
       # and for the priority
       s, mid, after = s.partition(/\d!/i)
       unless mid.empty?
-        after = _r_process_title(after)
+        _r_process_title(after)  # don't use any remnants
         self.priority = mid[0].to_i
       end
       # and now for description
@@ -64,7 +64,7 @@ class Task < ActiveRecord::Base
         after = _r_process_title(after)
         self.description = after.strip
       end
-      return s
+      return s  # i don't understand why this is unnecessary, we only want s, not mid or after??
     end
     
     def process_title
@@ -83,12 +83,11 @@ class Task < ActiveRecord::Base
     end
     
     def set_visible
-        self.visible = self.status != "retired"
-        return true
+        self.visible = self.status != 'retired'
     end
     
     def markdown(text)
-        text ||= ""
+        text ||= ''
         renderer = Redcarpet::Render::HTML.new(
             filter_html: true, hard_wrap: true)
         markdown = Redcarpet::Markdown.new(renderer,
