@@ -10,19 +10,19 @@ class TasksController < ApplicationController
     @task = current_user.tasks.build(task_params)
     # if we have parent_id, set it
     if @task.save
-      flash[:success] = "Task created!"
+      flash[:success] = 'Task created!'
       redirect_to request.referer
     else
-      flash[:error] = "Error: task invalid."
+      flash[:error] = 'Error: task invalid.'
       redirect_to request.referer
     end
   end
   
   def destroy
     if @task.destroy
-      flash[:success] = "Task deleted."
+      flash[:success] = 'Task deleted.'
     else
-      flash[:error] = "Error: task unable to be deleted."
+      flash[:error] = 'Error: task unable to be deleted.'
     end
     redirect_to request.referer
   end
@@ -45,8 +45,8 @@ class TasksController < ApplicationController
     @id = params[:form_id]
     respond_with(@task) do |format|
       format.html do
-        success ? flash[:success] = "Updated"
-                : flash[:error] = "Error: unable to update"
+        success ? flash[:success] = 'Updated'
+                : flash[:error] = 'Error: unable to update'
         redirect_back_or :back
       end
       format.json
@@ -54,8 +54,7 @@ class TasksController < ApplicationController
   end
   
   def move
-    if ['move_lower', 'move_higher', 'move_to_bottom',
-        'move_to_top'].include? (params[:method])
+    if %w(move_lower move_higher move_to_bottom move_to_top).include? (params[:method])
       @task.send(params[:method])
     end
     redirect_to request.referer

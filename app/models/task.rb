@@ -1,7 +1,8 @@
 require 'chronic'
 
 class Task < ActiveRecord::Base
-  belongs_to :user
+  has_many :permissions
+  has_many :users, through: :permissions
   
   validates :user_id, presence: true
   validates :title, presence: true, length: { maximum: 40 }

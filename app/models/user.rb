@@ -6,7 +6,8 @@ class User < ActiveRecord::Base
                                      dependent:   :destroy
     has_many :followers, through: :reverse_relationships, source: :follower
 
-    has_many :tasks, dependent: :destroy
+    has_many :permissions
+    has_many :tasks, through: :permissions
 
     before_save { self.email = email.downcase }
     before_create :create_remember_token
