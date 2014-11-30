@@ -6,8 +6,8 @@ class User < ActiveRecord::Base
                                      dependent:   :destroy
     has_many :followers, through: :reverse_relationships, source: :follower
 
-    has_many :permissions
-    has_many :tasks, through: :permissions
+    has_many :permissions, dependent: :destroy, inverse_of: :user
+    has_many :tasks, through: :permissions, inverse_of: :users
 
     before_save { self.email = email.downcase }
     before_create :create_remember_token
@@ -29,6 +29,21 @@ class User < ActiveRecord::Base
     
     def task_list
       tasks.roots
+    end
+
+    def can_view? (task)
+      p = permissions.find_by(task_id: task.id)
+      !p.nil? && (p.owner || p.editor || p.viewer)
+    end
+
+    def can_edit? (task)
+      p = permissions.find_by(task_id: task.id)
+      !p.nil? && (p.owner || p.editor)
+    end
+
+    def can_own? (task)
+      p = permissions.find_by(task_id: task.id)
+      !p.nil? && p.owner
     end
     
     def following?(other_user)

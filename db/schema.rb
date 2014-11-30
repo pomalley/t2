@@ -11,10 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140113201733) do
+ActiveRecord::Schema.define(version: 20141126163357) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "permissions", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "task_id"
+    t.boolean  "viewer"
+    t.boolean  "editor"
+    t.boolean  "owner"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "relationships", force: true do |t|
     t.integer  "follower_id"
@@ -28,7 +38,6 @@ ActiveRecord::Schema.define(version: 20140113201733) do
   add_index "relationships", ["follower_id"], name: "index_relationships_on_follower_id", using: :btree
 
   create_table "tasks", force: true do |t|
-    t.integer  "user_id"
     t.string   "title"
     t.text     "description"
     t.date     "due_date"
@@ -45,8 +54,6 @@ ActiveRecord::Schema.define(version: 20140113201733) do
   end
 
   add_index "tasks", ["ancestry"], name: "index_tasks_on_ancestry", using: :btree
-  add_index "tasks", ["user_id", "due_date"], name: "index_tasks_on_user_id_and_due_date", using: :btree
-  add_index "tasks", ["user_id"], name: "index_tasks_on_user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "name"

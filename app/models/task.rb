@@ -1,18 +1,17 @@
 require 'chronic'
 
 class Task < ActiveRecord::Base
-  has_many :permissions
-  has_many :users, through: :permissions
-  
-  validates :user_id, presence: true
+  has_many :permissions, dependent: :destroy, inverse_of: :task
+  has_many :users, through: :permissions, inverse_of: :tasks
+
+  accepts_nested_attributes_for :permissions
+
+  validates :permissions, length: { minimum: 1 }
+  validates_associated :permissions
+
   validates :title, presence: true, length: { maximum: 40 }
-  
-  validates_each :user_id do |record, attr, value|
-    record.errors.add(attr, 'must equal parent user') unless
-                    record.is_root? || value == record.parent.user_id
-  end
-  
-  before_validation :match_parent_user
+
+  before_validation :set_ownership
   before_validation :process_title
   before_save       :parse_description
   before_save       :limit_priority
@@ -29,12 +28,13 @@ class Task < ActiveRecord::Base
   include RankedModel
   ranks :position, with_same: [:ancestry, :visible]
   
-  
   private
-    def match_parent_user
-      self.user ||= self.parent.user unless self.is_root?
+    def set_ownership
+      unless self.permissions.any? { |p| p.owner } || self.permissions.empty?
+        self.permissions[0].owner = true
+      end
     end
-    
+
     def _r_process_title(s)
       if s.strip.empty?
         return ''
