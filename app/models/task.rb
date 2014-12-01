@@ -11,7 +11,7 @@ class Task < ActiveRecord::Base
 
   validates :title, presence: true, length: { maximum: 40 }
 
-  before_validation :set_ownership
+  before_validation :set_ownership, on: :create
   before_validation :process_title
   before_save       :parse_description
   before_save       :limit_priority
@@ -30,8 +30,17 @@ class Task < ActiveRecord::Base
   
   private
     def set_ownership
+      # match ownership with parent (e.g. when created by task.children.build)
+      unless self.is_root?
+        self.parent.permissions.each { |p|
+          unless self.permissions.any? { |p2| p2.user == p.user }
+            self.permissions.build(user: p.user, owner: p.owner, editor: p.editor, viewer: p.viewer)
+          end
+        }
+      end
+      # the following is the case when created by user.tasks.build--set first permission to owner
       unless self.permissions.any? { |p| p.owner } || self.permissions.empty?
-        self.permissions[0].owner = true
+        self.permissions.first.owner = true
       end
     end
 

@@ -31,17 +31,17 @@ class User < ActiveRecord::Base
       tasks.roots
     end
 
-    def can_view? (task)
+    def viewer? (task)
       p = permissions.find_by(task_id: task.id)
-      !p.nil? && (p.owner || p.editor || p.viewer)
+      !p.nil?
     end
 
-    def can_edit? (task)
+    def editor? (task)
       p = permissions.find_by(task_id: task.id)
       !p.nil? && (p.owner || p.editor)
     end
 
-    def can_own? (task)
+    def owner? (task)
       p = permissions.find_by(task_id: task.id)
       !p.nil? && p.owner
     end
