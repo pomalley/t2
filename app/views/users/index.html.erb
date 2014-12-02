@@ -1,6 +1,12 @@
 <% provide(:title, 'All users') %>
 <h1>All users</h1>
 
+<section class="flash">
+  <% flash.each do |key, value| %>
+      <div class="alert alert-<%= key %>"><%= value %></div>
+  <% end %>
+</section>
+
 <%= will_paginate %>
 
 <ul class="users">
