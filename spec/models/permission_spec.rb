@@ -37,6 +37,11 @@ describe Permission do
       it { should be_owner task }
       it { should be_editor task }
       it { should be_viewer task }
+      describe 'duplicate should be prohibited' do
+        subject(:duplicate) { task.permissions.build(viewer: true, user: user) }
+        it { should_not be_valid }
+      end
+
     end
     describe 'editor relations' do
       subject { editor }

@@ -23,7 +23,22 @@ describe 'Static pages' do
           expect(page).to have_selector("li##{item.id}", text: item.title)
         end
       end
-      
+
+      describe 'with respect to other users' do
+        let(:other) { FactoryGirl.create(:user_with_tasks) }
+        let(:shared) { other.tasks.last }
+        before do
+          shared.permissions.create!(user: user, viewer: true)
+          sign_in user
+          visit root_path
+        end
+        it 'should not render private tasks' do
+          expect(page).not_to have_selector("li##{other.tasks.first.id}")
+        end
+        it 'should render shared tasks' do
+          expect(page).to have_selector("li##{shared.id}", text: shared.title)
+        end
+      end
     end
   end
 

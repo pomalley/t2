@@ -21,9 +21,10 @@ FactoryGirl.define do
 
   factory :user_with_tasks, parent: :user do
     after(:create) { |user|
-      task = user.tasks.create(title: 'user child task')
+      task = user.tasks.create(title: 'user task')
       task.children.create(title: 'child task')
       task.children.create(title: 'child task 2')
+      user.tasks.create(title: 'user task 2')
     }
   end
 end
