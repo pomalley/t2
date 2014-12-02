@@ -61,6 +61,21 @@ describe Permission do
       it { should_not be_editor task }
       it { should_not be_viewer task }
     end
+
+    it 'should be deleted with user' do
+      id = permission.id
+      editor.destroy
+      id.should_not be_nil
+      Permission.find_by_id(id).should be_nil
+    end
+    it 'should be deleted with task' do
+      permissions = task.permissions.to_a
+      task.destroy
+      permissions.should_not be_empty
+      permissions.each do |p|
+        Permission.find_by_id(p.id).should be_nil
+      end
+    end
   end
 
 end
