@@ -1,6 +1,6 @@
 <% provide(:title, @user.name) %>
 <div class="row">
-  <aside class="span4">
+  <aside class="col-md-4">
     <section>
       <h1>
         <%= gravatar_for @user %>
@@ -11,8 +11,18 @@
       <%= render 'shared/stats' %>
     </section>
   </aside>
-  
-  <div class="span8">
+
+  <div class="col-md-8">
     <%= render 'follow_form' if signed_in? %>
   </div>
+</div>
+
+<div class="row">
+  <aside class="col-md-4">
+    <section class="flash">
+      <% flash.each do |key, value| %>
+          <div class="alert alert-<%= key %>"><%= value %></div>
+      <% end %>
+    </section>
+  </aside>
 </div>

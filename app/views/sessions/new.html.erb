@@ -3,6 +3,13 @@
 
 <div class="row">
   <div class="col-md-4 col-md-offset-4">
+
+    <section class="flash">
+      <% flash.each do |key, value| %>
+          <div class="alert alert-<%= key %>"><%= value %></div>
+      <% end %>
+    </section>
+
     <%= form_tag sessions_path do %>
 
       <%= label_tag :email %>
@@ -22,3 +29,4 @@
     <p>New user? <%= link_to "Sign up now!", signup_path %></p>
   </div>
 </div>
+

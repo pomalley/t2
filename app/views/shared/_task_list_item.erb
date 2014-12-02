@@ -1,3 +1,4 @@
+<!--suppress SpellCheckingInspection -->
 <li id="<%= task_list_item.id %>" data-id="<%= task_list_item.id %>"
   data-url="<%= sort_task_path(task_list_item) %>">
   <div class="list_item_background
@@ -6,15 +7,14 @@
   <% end %>
   ">
   <%#= sortable_element('test') %>
-  <%= render "shared/completed_form", task: task_list_item %>
-  <%= editable task_list_item, :priority, mode: "popup", placement: "bottom",
+  <%= render 'shared/completed_form', task: task_list_item %>
+  <%= editable task_list_item, :priority, mode: 'popup', placement: 'bottom',
         class: "priority priority_#{task_list_item.priority}" %>
 
   <% if task_list_item.description %>
-    <%= link_to \
-        '<span class="glyphicon glyphicon-chevron-right"></span>'.html_safe,
-        task_list_item, title: "view description", rel: "tooltip", 
-        :class => "description_link", 
+    <%= link_to '<span class="glyphicon glyphicon-chevron-right"></span>'.html_safe,
+        task_list_item, title: 'view description', rel: 'tooltip',
+        :class => 'description_link',
         :id => "#{task_list_item.id}_description",
         data: {alt: 
         "<span class='glyphicon glyphicon-chevron-down'></span>".html_safe
@@ -33,41 +33,40 @@
     <span class="text-muted">(no due date)</span>
   <% end %>
 
-  <% if current_user?(task_list_item.user) %>
-      <%= link_to \
-            '<span class="glyphicon glyphicon-edit"></span>'.html_safe, 
-            [:edit, task_list_item], title: "edit", rel: "tooltip" %>
-      <%= link_to \
-            '<span class="glyphicon glyphicon-remove"></span>'.html_safe,
-            task_list_item, method: :delete, title: "delete",
-            data: { confirm: "You sure?" }, rel: "tooltip" %>
-      <%= link_to \
-            '<span class="glyphicon glyphicon-plus"></span>'.html_safe, 
-            task_list_item, :class => "new_child_link", 
-            title: "new child task", rel: "tooltip",
+  <% if current_user.editor?(task_list_item) %>
+      <%= link_to '<span class="glyphicon glyphicon-edit"></span>'.html_safe,
+            [:edit, task_list_item], title: 'edit', rel: 'tooltip' %>
+      <% if current_user.owner?(task_list_item) %>
+        <%= link_to '<span class="glyphicon glyphicon-remove"></span>'.html_safe,
+              task_list_item, method: :delete, title: 'delete',
+              data: { confirm: 'You sure?'}, rel: 'tooltip' %>
+      <% end %>
+      <%= link_to '<span class="glyphicon glyphicon-plus"></span>'.html_safe,
+            task_list_item, :class => 'new_child_link',
+            title: 'new child task', rel: 'tooltip',
             :id => "#{task_list_item.id}_child" %>      
-      <%= render "shared/minimize_form", task: task_list_item %>
-      <%= render "shared/retire_form", task: task_list_item %>
+      <%= render 'shared/minimize_form', task: task_list_item %>
+      <%= render 'shared/retire_form', task: task_list_item %>
       <%= link_to '<span class="glyphicon glyphicon-arrow-up"></span>'.html_safe,
-        move_task_path(task_list_item, method: "move_higher"), method: :patch,
-        title: "move up", rel: "tooltip" %>
+        move_task_path(task_list_item, method: 'move_higher'), method: :patch,
+        title: 'move up', rel: 'tooltip' %>
       <%= link_to '<span class="glyphicon glyphicon-arrow-down"></span>'.html_safe,
-        move_task_path(task_list_item, method: "move_lower"), method: :patch,
-        title: "move down", rel: "tooltip" %>
+        move_task_path(task_list_item, method: 'move_lower'), method: :patch,
+        title: 'move down', rel: 'tooltip' %>
       <span class="handle glyphicon glyphicon-sort"></span>
       
-      <%= render "shared/description_editable", task: task_list_item, display: "none" %>
+      <%= render 'shared/description_editable', task: task_list_item, display: 'none' %>
 
       <div id="<%= task_list_item.id %>_child_form", style="display: none;">
-        <%= render "shared/task_form", task: task_list_item.children.build,
-                   placeholder: "New child task..." %>
+        <%= render 'shared/task_form', task: task_list_item.children.build,
+                   placeholder: 'New child task...' %>
       </div>
 
   <% end %>
   </div>
   <div id="<%=task_list_item.id%>_children_list"
     style="display: <%= task_list_item.status == 'active' ? 'block' : 'none' %>;" >
-    <%= render "shared/task_list", task_list: task_list_item.children,
+    <%= render 'shared/task_list', task_list: task_list_item.children,
                 id: task_list_item.id %>
   </div>
 </li>
