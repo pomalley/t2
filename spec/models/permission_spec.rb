@@ -62,20 +62,48 @@ describe Permission do
       it { should_not be_viewer task }
     end
 
-    it 'should be deleted with user' do
-      id = permission.id
-      editor.destroy
-      id.should_not be_nil
-      Permission.find_by_id(id).should be_nil
-    end
-    it 'should be deleted with task' do
-      permissions = task.permissions.to_a
-      task.destroy
-      permissions.should_not be_empty
-      permissions.each do |p|
-        Permission.find_by_id(p.id).should be_nil
+    describe 'deleting permissions' do
+      it 'should be able to delete a permission' do
+        expect { permission.destroy }.to change(task.permissions, :count).by(-1)
+      end
+      it 'should be deleted with user' do
+        expect { editor.destroy }.to change(task.permissions, :count).by(-1)
+      end
+      it 'should be deleted with task' do
+        permissions = task.permissions.to_a
+        n = Task.count
+        m = Permission.count
+        task.destroy!
+        expect(Task.count).to eq(n-1)
+        expect(Permission.count).to eq(m-3)
+        permissions.should_not be_empty
+        permissions.each do |p|
+          Permission.find_by_id(p.id).should be_nil
+        end
+      end
+
+      describe 'final permission' do
+        before {
+          user.permissions.first.destroy!
+          viewer.destroy!
+        }
+        it 'deleting all but one should work' do
+          expect(user).to have(0).permissions
+          expect(viewer).to have(0).permissions
+          expect(task.permissions.count).to eq(1)
+        end
+        it 'should find new owner' do
+          expect(editor).to be_owner(task)
+        end
+        it 'should not let last permission for a task be deleted' do
+          expect { permission.destroy }.not_to change(task.permissions, :count)
+        end
+        it 'should delete task with last user' do
+          expect { editor.destroy }.to change(Task, :count).by(-1)
+        end
       end
     end
+
   end
 
 end

@@ -1,7 +1,10 @@
 require 'chronic'
 
 class Task < ActiveRecord::Base
-  has_many :permissions, dependent: :destroy, inverse_of: :task
+  # note: dependent: :delete all skips callbacks from permissions.
+  # this is what we want because if the task is going then no point in shuffling around the ownership.
+  # still it seems wrong, somehow.
+  has_many :permissions, dependent: :delete_all, inverse_of: :task
   has_many :users, through: :permissions, inverse_of: :tasks
 
   accepts_nested_attributes_for :permissions
