@@ -12,6 +12,11 @@ describe PermissionsController do
     sign_in user_a, no_capybara: true
   }
 
+  describe 'todo'  do
+    pending "don't give a 403 for legal but invalid permission"
+    pending 'how to test for proper js.erb return?'
+  end
+
   describe 'adding a permission with AJAX' do
     it 'should create the permission' do
       expect do

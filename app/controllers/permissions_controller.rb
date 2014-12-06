@@ -12,18 +12,19 @@ class PermissionsController < ApplicationController
         format.js
       end
     else
-      render status: :forbidden
+      head :forbidden
     end
   end
 
   def destroy
-    if Permission.find(params[:id]).destroy
+    @permission = Permission.find_by_id params[:id]
+    if @permission && @permission.destroy
       respond_to do |format|
         format.html { redirect_back_or root_url }
         format.js
       end
     else
-      render status: :forbidden
+      head :forbidden
     end
 
   end
@@ -35,13 +36,13 @@ class PermissionsController < ApplicationController
 
   def can_create
     unless current_user.owner? Task.find(params[:permission][:task_id])
-      render status: :forbidden
+      head :forbidden
     end
   end
 
   def can_destroy
     unless current_user.owner?(Permission.find_by_id(params[:id]).task) || Permission.find_by_id(params[:id]).user == current_user
-      render status: :forbidden
+      head :forbidden
     end
   end
 end

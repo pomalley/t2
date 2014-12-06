@@ -53,6 +53,18 @@
 </div>
 
 <div class="row">
+  <div class="col-md-4">
+    <table class="table table-striped table-bordered">
+      <tr><th>Permissions</th></tr></tr>
+      <% task.permissions.each do |p| %>
+        <tr id="permission_<%= task.id %>"><%= render p %></tr>
+      <% end %>
+        <tr id="permission"><%= render task.permissions.build %></tr>
+    </table>
+  </div>
+</div>
+
+<div class="row">
   <aside class="col-md-4">
     <%= render 'shared/task_form', task: task.children.build,
                placeholder: 'New child task...' %>

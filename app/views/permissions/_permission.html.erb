@@ -1,0 +1,39 @@
+<td>
+  <% if permission.user %>
+    <%= permission.user.name %>
+  <% else %>
+      <%= select_tag(:user,
+                     options_for_select(
+                             [['Select user...', -1]] + @user.followed_users.map { |u| [u.name, u.id] },
+                             -1)
+          )
+      %>
+
+  <% end %>
+</td>
+<td>
+  <% selection = if permission.owner then
+                   1
+                 else
+                   permission.editor ? 2 : 3
+                 end %>
+  <%= select_tag(:role, options_for_select([['Owner', 1], ['Editor', 2], ['Viewer', 3]], selection.to_int)) %>
+</td>
+<td>
+  <% if permission.user %>
+    <%= form_for(permission,
+               html: { method: :delete },
+               remote: true) do |f| %>
+      <%= f.submit 'remove', class: 'btn btn-warning' %>
+    <% end %>
+  <% else %>
+    <%= form_for(permission, remote: true) do |f| %>
+      <%= f.submit 'create', class: 'btn btn-success' %>
+      <%= f.hidden_field :task_id %>
+          <%= f.hidden_field :user_id %>
+          <%= f.hidden_field :owner %>
+          <%= f.hidden_field :editor %>
+          <%= f.hidden_field :viewer %>
+    <% end %>
+  <% end %>
+</td>
