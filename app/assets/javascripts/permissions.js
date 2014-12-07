@@ -3,10 +3,11 @@
 // You can use CoffeeScript in this file: http://coffeescript.org/
 
 
-function permReady() {
+function permissionsReady() {
     var $parent = $('#permission');
     var $role = $parent.find('#role');
     // set the hidden variables of the create form when user selects role
+    $role.off();
     $role.change( function() {
         $parent.find('#permission_owner').attr('value', $role.val() == 1);
         $parent.find('#permission_editor').attr('value', $role.val() == 2);
@@ -17,10 +18,11 @@ function permReady() {
 
     // same for user
     var $user = $parent.find('#user');
+    $user.off();
     $user.change( function() {
        $parent.find('#permission_user_id').attr('value', $user.val());
     });
 }
 
-$(document).ready(permReady);
-$(document).on('page:load', permReady);
+$(document).ready(permissionsReady);
+$(document).on('page:load', permissionsReady);

@@ -4,7 +4,7 @@
   <% else %>
       <%= select_tag(:user,
                      options_for_select(
-                             [['Select user...', -1]] + @user.followed_users.map { |u| [u.name, u.id] },
+                             [['Select user...', -1]] + current_user.followed_users.map { |u| [u.name, u.id] },
                              -1)
           )
       %>
@@ -12,7 +12,7 @@
   <% end %>
 </td>
 <td>
-  <% selection = if permission.owner then
+  <% selection = if permission.owner
                    1
                  else
                    permission.editor ? 2 : 3

@@ -57,7 +57,7 @@
     <table class="table table-striped table-bordered">
       <tr><th>Permissions</th></tr></tr>
       <% task.permissions.each do |p| %>
-        <tr id="permission_<%= task.id %>"><%= render p %></tr>
+        <tr id="permission_<%= p.id %>"><%= render p %></tr>
       <% end %>
         <tr id="permission"><%= render task.permissions.build %></tr>
     </table>

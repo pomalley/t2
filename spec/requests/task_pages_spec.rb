@@ -1,15 +1,21 @@
 require 'spec_helper'
 
+Capybara.javascript_driver = :webkit
+
 describe 'Task pages' do
 
   subject { page }
 
-  let(:user) { FactoryGirl.create(:user_with_tasks) }
-  let(:user2) { FactoryGirl.create(:user_with_tasks) }
-  let(:task) { user.tasks.first }
-  let(:task2) { user2.tasks.first }
+  let!(:user) { FactoryGirl.create(:user_with_tasks) }
+  let!(:user2) { FactoryGirl.create(:user_with_tasks) }
+  let!(:user3) { FactoryGirl.create(:user_with_tasks) }
+  let!(:task) { user.tasks.first }
+  let!(:task2) { user2.tasks.first }
+  let!(:perm) { task.permissions.create!(user_id: user2.id, editor: true) }
   
   before do
+    user.follow! user2
+    user.follow! user3
     sign_in user
   end
   
@@ -43,9 +49,38 @@ describe 'Task pages' do
   end
   
   describe 'Task display' do
-    before { visit task_path(task) }
+    before {
+      visit task_path(task)
+    }
+    let(:new_button) { page.find('#new_permission').find('input[type~=submit]') }
+    let(:del_button) { page.find("#permission_#{perm.id}").find('input[type~=submit]') }
     
     it { should have_content task.title }
+    # should list permissions
+    it { should have_content user.name }
+    it { should have_content user2.name }
+    it 'should have correct num permissions' do
+      expect(task.permissions.count).to eq(2)
+    end
+
+    # this doesn't work b/c javascript won't work
+    it 'should create permission with js' do
+      expect {
+        page.find('#permission').select user3.name, from: 'user'
+        page.find('#permission').select 'Editor', from: 'role'
+        new_button.click
+      }.to change(task.permissions, :count).by(1)
+    end
+    it 'should delete permission with js' do
+      expect {
+        del_button.click
+      }.to change(task.permissions, :count).by(-1)
+    end
+    it 'should change permission with js' do
+      expect {
+        page.find('#permission').select 'Viewer', from: 'role'
+      }
+    end
   end
   
   describe 'as wrong user' do

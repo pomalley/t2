@@ -1,2 +1,2 @@
-alert("permission destroyed");
-$("#permission_<%= @permission.id %>").remove();
+//alert("permission destroyed");
+$("#permission_<%= @permission.id %>").fadeOut(300, function() { $(this).remove(); });
