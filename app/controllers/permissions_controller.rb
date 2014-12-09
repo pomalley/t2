@@ -1,7 +1,10 @@
 class PermissionsController < ApplicationController
   before_action :signed_in_user
   before_action :can_create, only: [:create]
+  before_action :can_update, only: [:update]
   before_action :can_destroy, only: [:destroy]
+
+  respond_to :html, :json, :js
 
   def create
     #@permission = Task.find(permission_params[:task_id]).permissions.build(permission_params)
@@ -10,6 +13,23 @@ class PermissionsController < ApplicationController
       respond_to do |format|
         format.html { redirect_back_or root_url }
         format.js
+      end
+    else
+      head :forbidden
+    end
+  end
+
+  def update
+    #@permission = Permission.find params[:id] # defined in can_update
+    success = @permission.update permission_params
+    if success
+      respond_with @permission do |format|
+        format.html do
+          success ? flash[:success] = 'Updated'
+          : flash[:error] = 'Error: unable to update'
+          redirect_back_or :back
+        end
+        format.json { render json: @permission }
       end
     else
       head :forbidden
@@ -36,6 +56,13 @@ class PermissionsController < ApplicationController
 
   def can_create
     unless current_user.owner? Task.find(params[:permission][:task_id])
+      head :forbidden
+    end
+  end
+
+  def can_update
+    @permission = Permission.find params[:id]
+    unless current_user.owner? @permission.task
       head :forbidden
     end
   end

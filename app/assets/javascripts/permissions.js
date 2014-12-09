@@ -22,6 +22,28 @@ function permissionsReady() {
     $user.change( function() {
        $parent.find('#permission_user_id').attr('value', $user.val());
     });
+
+    // changing an existing role gets its own AJAX request
+    $('.existing-role').change( function() {
+        var $this = $(this);
+        var owner = $this.val() == 1;
+        var editor = $this.val() == 2;
+        var viewer = $this.val() == 3;
+        var $throbber = $this.parentsUntil('tr').siblings().find('.permission-throbber');
+        var $success = $throbber.siblings('.permission-success');
+        var failure = $throbber.siblings('.permission-failure');
+        $throbber.show();
+        $.ajax({
+            type: 'PATCH',
+            url: $this.data('url'),
+            dataType: 'json',
+            data: { permission: { owner: owner, viewer: viewer, editor: editor} }
+        }).success(function() {
+            $throbber.hide();
+            $success.show();
+            $success.fadeOut(1000);
+        });
+    });
 }
 
 $(document).ready(permissionsReady);

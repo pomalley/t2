@@ -1,11 +1,20 @@
 <td>
+  <span class="permission-throbber" style="display:none;">
+    <%= image_tag('throbber.gif') %>
+  </span>
+  <span class="permission-success" style="display:none;">
+    <%= image_tag('tick.png') %>
+  </span>
+  <span class="permission-failure" style="display:none;">
+    <%= image_tag('cross.png') %>
+  </span>
   <% if permission.user %>
     <%= permission.user.name %>
   <% else %>
       <%= select_tag(:user,
                      options_for_select(
-                             [['Select user...', -1]] + current_user.followed_users.map { |u| [u.name, u.id] },
-                             -1)
+                             [['Select user...', -1]] + current_user.followed_users.map { |u| [u.name, u.id] }, -1
+                     )
           )
       %>
 
@@ -17,7 +26,11 @@
                  else
                    permission.editor ? 2 : 3
                  end %>
-  <%= select_tag(:role, options_for_select([['Owner', 1], ['Editor', 2], ['Viewer', 3]], selection.to_int)) %>
+  <%= select_tag(:role,
+                 options_for_select([['Owner', 1], ['Editor', 2], ['Viewer', 3]], selection.to_int),
+                 data: permission.user ? { id: permission.id, url: permission_path(permission) } : {},
+                 class: permission.user ? 'existing-role' : 'new-role'
+      ) %>
 </td>
 <td>
   <% if permission.user %>

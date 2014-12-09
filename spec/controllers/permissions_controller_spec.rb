@@ -29,6 +29,19 @@ describe PermissionsController do
     end
   end
 
+  describe 'updating a permission with AJAX' do
+    before {
+      task.permissions.create!(user: user_b, editor: true)
+    }
+    let (:perm) { task.permissions.find_by(user: user_b) }
+    it 'update the permission and respond wiht success' do
+      expect(user_b).not_to be_owner task
+      patch :update, id: perm.id, permission: { owner: true }, format: :json
+      expect(response).to be_success
+      expect(user_b).to be_owner task
+    end
+  end
+
   describe 'deleting a permission with AJAX' do
     before {
       task.permissions.create!(user: user_b, editor: true)
@@ -74,6 +87,10 @@ describe PermissionsController do
       expect do
         xhr :post, :destroy, id: perm_b.id
       end.to change(Permission, :count).by(-1)
+    end
+    it 'should not allow permission updating' do
+      patch :update, id: perm_b.id, permission: { owner: true }, format: :json
+      expect(user_b).not_to be_owner task
     end
   end
 
