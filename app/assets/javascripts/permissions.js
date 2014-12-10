@@ -31,8 +31,12 @@ function permissionsReady() {
         var viewer = $this.val() == 3;
         var $throbber = $this.parentsUntil('tr').siblings().find('.permission-throbber');
         var $success = $throbber.siblings('.permission-success');
-        var failure = $throbber.siblings('.permission-failure');
+        var $failure = $throbber.siblings('.permission-failure');
+        var $failureText = $throbber.siblings('.permission-failure-text');
         $throbber.show();
+        $success.hide();
+        $failure.hide();
+        $failureText.hide();
         $.ajax({
             type: 'PATCH',
             url: $this.data('url'),
@@ -42,6 +46,12 @@ function permissionsReady() {
             $throbber.hide();
             $success.show();
             $success.fadeOut(1000);
+        }).error(function (jqXHR) {
+            $throbber.hide();
+            $failure.show();
+            $failureText.html('<br>' + jqXHR.responseText).show();
+            $failure.fadeOut(3000);
+            $failureText.fadeOut(3000);
         });
     });
 }

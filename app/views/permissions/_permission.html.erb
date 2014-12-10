@@ -1,13 +1,4 @@
 <td>
-  <span class="permission-throbber" style="display:none;">
-    <%= image_tag('throbber.gif') %>
-  </span>
-  <span class="permission-success" style="display:none;">
-    <%= image_tag('tick.png') %>
-  </span>
-  <span class="permission-failure" style="display:none;">
-    <%= image_tag('cross.png') %>
-  </span>
   <% if permission.user %>
     <%= permission.user.name %>
   <% else %>
@@ -17,8 +8,19 @@
                      )
           )
       %>
-
   <% end %>
+  <span class="permission-throbber" style="display:none;">
+    <%= image_tag('throbber.gif') %>
+  </span>
+  <span class="permission-success" style="display:none;">
+    <%= image_tag('tick.png') %>
+  </span>
+  <span class="permission-failure" style="display:none;">
+    <%= image_tag('cross.png') %>
+  </span>
+  <span class="permission-failure-text" style="display:none;">
+    <br>
+  </span>
 </td>
 <td>
   <% selection = if permission.owner
