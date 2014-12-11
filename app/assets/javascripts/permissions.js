@@ -52,7 +52,26 @@ function permissionsReady() {
             $failureText.html('<br>' + jqXHR.responseText).show();
             $failure.fadeOut(3000);
             $failureText.fadeOut(3000);
+            $this.find('option').prop('selected', function() {
+                return this.defaultSelected;
+            });
         });
+    });
+
+    // actually the remove form, not edit
+    $('.edit_permission').add('.new_permission').on('ajax:error', function(xhr, b) {
+        var $this = $(this);
+        var $failure = $this.parentsUntil('tr').siblings().find('.permission-failure');
+        var $failureText = $failure.siblings('.permission-failure-text');
+        $failure.siblings('.permission-throbber').hide();
+        $failure.show();
+        $failureText.html('<br>' + b.responseText).show();
+        $failure.fadeOut(3000);
+        $failureText.fadeOut(3000);
+    }).on('ajax:success', function() {
+        $(this).parentsUntil('tr').siblings().find('.permission-throbber').hide();
+    }).on('ajax:beforeSend', function() {
+        $(this).parentsUntil('tr').siblings().find('.permission-throbber').show();
     });
 }
 

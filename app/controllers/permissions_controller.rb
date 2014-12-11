@@ -25,33 +25,24 @@ class PermissionsController < ApplicationController
   def update
     #@permission = Permission.find params[:id] # defined in can_update
     success = @permission.update permission_params
-    respond_with @permission do |format|
-      format.html do
-        success ? flash[:success] = 'Updated'
-        : flash[:error] = 'Error: unable to update'
-        redirect_back_or :back
-      end
-      format.json do
-        if success
-          render json: @permission
-        else
-          render text: 'Failed to update permission', status: 403
+    if success
+      respond_with @permission do |format|
+        format.html do
+          flash[:success] = 'Updated'
+          redirect_back_or :back
         end
+        format.json { render json: @permission }
       end
+    else
+      forbidden_response msg=@permission.errors[:base].join('\n')
     end
   end
 
   def destroy
     @permission = Permission.find_by_id params[:id]
-    if @permission && @permission.destroy
-      respond_to do |format|
-        format.html { redirect_back_or root_url }
-        format.js
-      end
-    else
-      head :forbidden
+    unless @permission && @permission.destroy
+      forbidden_response msg=@permission.errors[:base].join('\n')
     end
-
   end
 
   private
@@ -61,7 +52,7 @@ class PermissionsController < ApplicationController
 
   def can_create
     unless current_user.owner? Task.find(params[:permission][:task_id])
-      head :forbidden
+      forbidden_response
     end
   end
 
@@ -73,19 +64,20 @@ class PermissionsController < ApplicationController
   end
 
   def can_destroy
-    unless current_user.owner?(Permission.find_by_id(params[:id]).task) || Permission.find_by_id(params[:id]).user == current_user
+    @permission = Permission.find params[:id]
+    unless current_user.owner?(@permission.task) || @permission.user == current_user
       forbidden_response
     end
   end
 
-  def forbidden_response
+  def forbidden_response(msg='Permission denied.')
     respond_to do |format|
       format.html do
-        flash[:error] = "You don't have permission for that."
+        flash[:error] = msg
         redirect_back_or :back
       end
       format.js do
-        render text: 'Permission denied.', status: 403
+        render text: msg, status: 403
       end
     end
   end

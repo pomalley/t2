@@ -12,6 +12,9 @@ describe Permission do
   subject { permission }
 
   describe 'Basic properties' do
+    before {
+      task.save!
+    }
     it { should respond_to(:user) }
     it { should respond_to(:task) }
     it { should respond_to(:owner) }
@@ -97,6 +100,11 @@ describe Permission do
         end
         it 'should not let last permission for a task be deleted' do
           expect { permission.destroy }.not_to change(task.permissions, :count)
+        end
+        it 'should not let last permission be set to non-owner' do
+          p = task.permissions.first
+          p.owner = false
+          p.editor = true
         end
         it 'should delete task with last user' do
           expect { editor.destroy }.to change(Task, :count).by(-1)

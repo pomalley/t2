@@ -38,12 +38,12 @@
   <% if permission.user %>
     <%= form_for(permission,
                html: { method: :delete },
-               remote: true) do |f| %>
-      <%= f.submit 'remove', class: 'btn btn-warning' %>
+               remote: true, class: 'permission-remove') do |f| %>
+      <%= f.submit 'remove', class: 'btn btn-warning permission-remove' %>
     <% end %>
   <% else %>
     <%= form_for(permission, remote: true) do |f| %>
-      <%= f.submit 'create', class: 'btn btn-success' %>
+      <%= f.submit 'create', class: 'btn btn-success permission-create' %>
       <%= f.hidden_field :task_id %>
           <%= f.hidden_field :user_id %>
           <%= f.hidden_field :owner %>

@@ -7,6 +7,7 @@ class Permission < ActiveRecord::Base
   validates :task, presence: true
   validates :owner, inclusion: { in: [true], message: 'one permission must be true'},
                     unless: Proc.new { |a| a.viewer || a.editor }
+  validate :must_have_one_owner
 
   before_destroy :prevent_orphan
   after_destroy  :maintain_owner
@@ -14,7 +15,7 @@ class Permission < ActiveRecord::Base
   private
   def prevent_orphan
     if task.permissions.count < 2
-      errors[:base] << 'cannot delete last permission for a task'
+      errors[:base] << 'Cannot delete last permission for a task.'
       false
     end
   end
@@ -27,6 +28,12 @@ class Permission < ActiveRecord::Base
         task.permissions.first.viewer = false
         task.permissions.first.save!
       end
+    end
+  end
+
+  def must_have_one_owner
+    unless self.owner || self.task.permissions.any? { |p| p.id != self.id && p.owner }
+      errors.add(:base, 'Must have one owner.')
     end
   end
 end

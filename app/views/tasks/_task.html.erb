@@ -68,6 +68,11 @@
   <aside class="col-md-4">
     <%= render 'shared/task_form', task: task.children.build,
                placeholder: 'New child task...' %>
+    <section class="flash">
+      <% flash.each do |key, value| %>
+          <div class="alert alert-<%= key %>"><%= value %></div>
+      <% end %>
+    </section>
   </aside>
   <div class="col-md-4 pull-right">
   <% task.children.each_with_index do |t, i| %>
