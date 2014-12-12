@@ -32,7 +32,7 @@ class Permission < ActiveRecord::Base
   end
 
   def must_have_one_owner
-    unless self.owner || self.task.permissions.any? { |p| p.id != self.id && p.owner }
+    unless self.owner || self.task.permissions.any? { |p| (p.id != self.id || p.id.nil?) && p.owner }
       errors.add(:base, 'Must have one owner.')
     end
   end
