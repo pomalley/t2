@@ -12,11 +12,6 @@ describe PermissionsController do
     sign_in user_a, no_capybara: true
   }
 
-  describe 'todo'  do
-    pending "don't give a 403 for legal but invalid permission"
-    pending 'how to test for proper js.erb return?'
-  end
-
   describe 'adding a permission with AJAX' do
     it 'should create the permission' do
       expect do
@@ -34,7 +29,7 @@ describe PermissionsController do
       task.permissions.create!(user: user_b, editor: true)
     }
     let (:perm) { task.permissions.find_by(user: user_b) }
-    it 'update the permission and respond wiht success' do
+    it 'update the permission and respond with success' do
       expect(user_b).not_to be_owner task
       patch :update, id: perm.id, permission: { owner: true }, format: :json
       expect(response).to be_success
@@ -89,7 +84,7 @@ describe PermissionsController do
       end.to change(Permission, :count).by(-1)
     end
     it 'should not allow permission updating' do
-      patch :update, id: perm_b.id, permission: { owner: true }, format: :json
+      patch :update, id: perm_b.id, permission: { owner: true }, format: :js
       expect(user_b).not_to be_owner task
     end
   end
