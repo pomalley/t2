@@ -1,9 +1,13 @@
-class TasksController < ApplicationController
+class TasksController < AccessController
 
   before_action :signed_in_user
   before_action :correct_user, only:
     [:destroy, :show, :update, :edit, :move, :sort]
-  
+  before_action :can_destroy, only: :destroy
+  before_action :can_update, only: [:edit, :move, :sort, :update]
+  before_action :can_view, only: :show
+
+
   respond_to :html, :json, :js
 
   def create
@@ -77,5 +81,15 @@ class TasksController < ApplicationController
       @task = current_user.tasks.find_by(id: params[:id])
       redirect_to(root_url) if @task.nil?
     end
+
+  def can_destroy
+    forbidden_response(force_403: true) unless current_user.owner? @task
+  end
+  def can_update
+    forbidden_response(force_403: true) unless current_user.editor? @task
+  end
+  def can_view
+    forbidden_response(force_403: true) unless current_user.viewer? @task
+  end
 
 end

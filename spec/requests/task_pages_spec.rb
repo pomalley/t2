@@ -92,5 +92,49 @@ describe 'Task pages' do
     
     specify { expect(response).to redirect_to(root_url) }
   end
-  
+
+  describe 'with view permissions' do
+    before do
+      task2.permissions.create!(user: user, viewer: true)
+      sign_in user#, no_capybara: true
+      visit task_path(task2)
+    end
+
+    specify { user.should be_viewer task2 }
+    it { should have_title(full_title(task2.title)) }
+    it { should have_content(task2.title) }
+    it { should_not have_selector ('.editable') }
+  end
+
+  describe 'with editor permissions' do
+    before do
+      task2.permissions.create!(user: user, editor: true)
+      sign_in user#, no_capybara: true
+      visit task_path(task2)
+    end
+
+    specify { user.should be_editor task2 }
+    it { should have_title(full_title(task2.title)) }
+    it { should have_content(task2.title) }
+    it { should have_selector ('.editable') }
+  end
+
+  describe 'with owner permissions' do
+    before do
+      task2.permissions.create!(user: user, owner: true)
+      sign_in user#, no_capybara: true
+      visit task_path(task2)
+    end
+
+    specify { user.should be_owner task2 }
+    it { should have_title(full_title(task2.title)) }
+    it { should have_content(task2.title) }
+    it { should have_selector ('.editable') }
+  end
+
+
 end
+
+
+
+

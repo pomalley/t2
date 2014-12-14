@@ -1,3 +1,5 @@
+<% editor = current_user.editor? task %>
+
 <span class="row">
 <% task.ancestors(from_depth: -4).each do |t| %>
   <%= link_to t.title, task_path(t), class: 'btn btn-default' %> &gt;
@@ -7,7 +9,12 @@
 <div class="container task">
 
 <div class="row"><h3 class="title col-md-12">
-  <%= editable task, :title %>
+  <% if editor %>
+    <%= editable task, :title %>
+  <% else %>
+    <span><%= task.title %></span>
+  <% end %>
+
 </h3></div>
 
 <div class="row task header">
@@ -22,23 +29,45 @@
   <%= render 'shared/completed_form', task: task %>
 </span>
 <span class="col-md-4">
-  <%= render 'shared/description_editable', task: task %>
+  <% if editor %>
+    <%= render 'shared/description_editable', task: task %>
+  <% else %>
+    <span class="description"><%= raw task.description_parsed %></span>
+  <% end %>
 </span>
 
 <span class="col-md-3">
-  <%= editable task, :due_date, type: 'combodate', class: 'datepicker',
+  <% if editor %>
+    <%= editable task, :due_date, type: 'combodate', class: 'datepicker',
                 format: 'YYYY-MM-DD', template: 'YYYY / MM / DD',
                 date_orientation: 'bottom',
                 datepicker: {todayBtn: 'linked', orientation: 'bottom'}
                 %>
+  <% else %>
+    <% if task.due_date %>
+      <abbr class="timestamp daysfromnow" title="<%= task.due_date %>">
+        <%= task.due_date %>
+      </abbr>
+    <% else %>
+      <span class="text-muted">(no due date)</span>
+    <% end %>
+  <% end %>
 </span>
 
 <span class="col-md-1">
-  <%= editable task, :priority, mode: 'popup', placement: 'bottom' %>
+  <% if editor %>
+    <%= editable task, :priority, mode: 'popup', placement: 'bottom' %>
+  <% else %>
+    <span><%= task.priority %></span>
+  <% end %>
 </span>
 
 <span class="col-md-1">
-  <%= editable task, :status, mode: 'popup', placement: 'bottom' %>
+  <% if editor %>
+    <%= editable task, :status, mode: 'popup', placement: 'bottom' %>
+  <% else %>
+    <span><%= task.status %></span>
+  <% end %>
 </span>
 
 <span class="col-md-1 pull-right">

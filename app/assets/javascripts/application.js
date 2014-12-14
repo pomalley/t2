@@ -41,7 +41,7 @@ var descriptionSuccess = function (response, value) {
 // for all editables, a basic error parser
 var editableError = function(response, newValue) {
     var obj = JSON.parse(response.responseText);
-    var s = "";
+    var s = obj.msg;
     for (var o in obj.errors) {
         s += o + ": " + obj.errors[o];
     }
@@ -54,18 +54,18 @@ var ready = function() {
   $(".editable:not(.description):not(.priority)").editable( {
     error: editableError,
     success: null, 
-    display: null,
+    display: null
   });
   $(".editable.description").editable( {
     error: editableError,
     success: descriptionSuccess,
     display: null,
-    toggle: 'dblclick',
+    toggle: 'dblclick'
   });
   $(".editable.priority").editable( {
     error: editableError,
     success: null,
-    display: priorityDisplay,
+    display: priorityDisplay
   });
   
   $(".sortable").sortable( {
@@ -81,9 +81,9 @@ var ready = function() {
         type: 'PATCH',
         url: url,
         datatype: 'json',
-        data: { position: position },
+        data: { position: position }
       });
-    },
+    }
   } );
 };
 

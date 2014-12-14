@@ -1,4 +1,4 @@
-class PermissionsController < ApplicationController
+class PermissionsController < AccessController
   before_action :signed_in_user
   before_action :can_create, only: [:create]
   before_action :can_update, only: [:update]
@@ -70,15 +70,4 @@ class PermissionsController < ApplicationController
     end
   end
 
-  def forbidden_response(msg='Permission denied.')
-    respond_to do |format|
-      format.html do
-        flash[:error] = msg
-        redirect_back_or :back
-      end
-      format.js do
-        render text: msg, status: 403
-      end
-    end
-  end
 end
