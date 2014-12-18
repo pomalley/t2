@@ -63,6 +63,30 @@ describe 'Task pages' do
       expect(task.permissions.count).to eq(2)
     end
 
+    describe 'child task creation' do
+      describe 'with invalid info' do
+        it 'should not create task' do
+          expect { click_button 'Create' }.not_to change(Task, :count)
+        end
+        describe 'should display error' do
+          before { click_button 'Create' }
+          it { should have_content 'Error' }
+        end
+      end
+      describe 'with valid info' do
+        before do
+          fill_in 'task_title', with: 'new child task'
+        end
+        it 'should create task' do
+          expect { click_button 'Create' }.to change(Task, :count).by(1)
+        end
+        describe 'should report success' do
+          before { click_button 'Create' }
+          it { should have_content 'Task created' }
+        end
+      end
+    end
+
     # this doesn't work b/c javascript won't work
     pending 'figure out how to test js'
     # it 'should create permission with js' do
@@ -132,6 +156,22 @@ describe 'Task pages' do
     it { should have_selector ('.editable') }
   end
 
+  describe 'Issue #1: child creation with multiple owners' do
+    before do
+      perm.editor = false
+      perm.owner = true
+      perm.save!
+      visit task_path(task)
+      fill_in 'task_title', with: 'child task issue #1'
+    end
+    it 'should create task' do
+      expect { click_button 'Create' }.to change(Task, :count).by(1)
+    end
+    describe 'should report success' do
+      before { click_button 'Create' }
+      it { should have_content 'Task created' }
+    end
+  end
 
 end
 

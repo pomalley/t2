@@ -33,15 +33,14 @@ class Task < ActiveRecord::Base
   
   private
     def set_ownership
-      # match ownership with parent (e.g. when created by task.children.build)
+      # match ownership with parent on creation (if there is a parent)
       unless self.is_root?
+        self.permissions.destroy_all  # clear out the blank one if created by e.g. user.tasks.build(parent_id=x)
         self.parent.permissions.each { |p|
-          unless self.permissions.any? { |p2| p2.user == p.user }
-            self.permissions.build(user: p.user, owner: p.owner, editor: p.editor, viewer: p.viewer)
-          end
+          self.permissions.build(user: p.user, owner: p.owner, editor: p.editor, viewer: p.viewer)
         }
       end
-      # the following is the case when created by user.tasks.build--set first permission to owner
+      # when created by user.tasks.build and without a parent, the permission needs to be set to owner
       unless self.permissions.any? { |p| p.owner } || self.permissions.empty?
         self.permissions.first.owner = true
       end
