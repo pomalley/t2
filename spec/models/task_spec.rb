@@ -92,4 +92,16 @@ describe Task do
     its(:priority) { should eq(2) }
   end
 
+  describe 'Issue #1: child task creation with multiple owners' do
+    before do
+      @task.save!
+      @task.permissions.build(user: other, owner: true).save!
+    end
+    let(:child) { user.tasks.build(title: 'Issue 1 child', parent_id: @task.id) }
+    it 'should work' do
+      igexpect(child).to be_valid
+      expect(child.save!).to change(Task.count).by(1)
+    end
+  end
+
 end
