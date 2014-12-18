@@ -99,8 +99,8 @@ describe Task do
     end
     let(:child) { user.tasks.build(title: 'Issue 1 child', parent_id: @task.id) }
     it 'should work' do
-      igexpect(child).to be_valid
-      expect(child.save!).to change(Task.count).by(1)
+      expect(child).to be_valid
+      expect{ child.save! }.to change(Task, :count).by(1)
     end
   end
 
