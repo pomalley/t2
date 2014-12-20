@@ -46,6 +46,10 @@ class User < ActiveRecord::Base
       p = permissions.find_by(task_id: task.id)
       !p.nil? && p.owner
     end
+
+    def owns_descendants? (task)
+      task.descendants.all? { |t| owner? t }
+    end
     
     def following?(other_user)
       relationships.find_by(followed_id: other_user.id)

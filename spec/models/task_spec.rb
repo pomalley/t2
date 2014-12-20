@@ -4,6 +4,7 @@ describe Task do
 
   let(:user) { FactoryGirl.create(:user) }
   let(:other) { FactoryGirl.create(:user) }
+  let(:third) { FactoryGirl.create(:user) }
   
   before { @task = user.tasks.build(title: 'Test Task') }
   
@@ -60,6 +61,13 @@ describe Task do
     its(:children) { should include(@child2) }
     its(:children) { should_not include(@grandchild) }
     its(:descendants) { should include(@grandchild) }
+    it 'should report correct descendant ownership' do
+      user.should be_owns_descendants @task
+      other.should_not be_owns_descendants @task
+      @task.permissions.create!(user: third, owner: true)
+      third.should be_owner @task
+      third.should_not be_owns_descendants @task
+    end
     
     describe 'descendant properties' do
       subject { @child1 }
