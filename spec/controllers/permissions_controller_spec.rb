@@ -89,4 +89,19 @@ describe PermissionsController do
     end
   end
 
+  describe 'matching descendant tasks' do
+    let!(:perm) { task.permissions.create(user: user_b, owner: true) }
+    it 'should allow owner to match permissions' do
+      expect(user_b).not_to be_owner(task.children.first)
+      patch :propagate, id: perm.id, format: :js
+      expect(user_b).to be_owner(task.children.first)
+    end
+    it 'should not allow non-owner of children to match permissions' do
+      sign_in user_b, no_capybara: true
+      patch :propagate, id: perm.id, format: :js
+      expect(user_b).not_to be_owner(task.children.first)
+      expect(response).to be_forbidden
+    end
+  end
+
 end

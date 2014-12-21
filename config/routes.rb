@@ -11,7 +11,11 @@ T2::Application.routes.draw do
   end
   resources :sessions, only: [:new, :create, :destroy]
   resources :relationships, only: [:create, :destroy]
-  resources :permissions, only: [:create, :destroy, :update]
+  resources :permissions, only: [:create, :destroy, :update] do
+    member do
+      patch :propagate
+    end
+  end
   root  'static_pages#home'
   match '/signup',  to: 'users#new',            via: 'get'
   match '/signin',  to: 'sessions#new',         via: 'get'

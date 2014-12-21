@@ -2,10 +2,12 @@ class AccessController < ApplicationController
 
 private
 
-  def forbidden_response(msg: 'Permission denied.', force_403: false)
+  def forbidden_response(options={})
+    options = {msg: 'Permission denied.', force_403: false}.update(options)
+    msg = options[:msg]
     respond_to do |format|
       format.html do
-        if force_403
+        if options[:force_403]
           render text: msg, status: 403
         else
           flash[:error] = msg
