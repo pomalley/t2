@@ -10,7 +10,15 @@ class PermissionsController < AccessController
   def create
     #@permission = Task.find(permission_params[:task_id]).permissions.build(permission_params)
     @permission = Permission.new permission_params
+    if params[:propagate] == '1'
+      unless can_propagate
+        return
+      end
+    end
     if @permission.save
+      if params[:propagate] == '1'
+        perform_propagation
+      end
       respond_to do |format|
         format.html { redirect_back_or root_url }
         format.js
@@ -25,8 +33,12 @@ class PermissionsController < AccessController
 
   def update
     #@permission = Permission.find params[:id] # defined in can_update
+    if params[:propagate] == '1' && !can_propagate
+      return
+    end
     success = @permission.update permission_params
     if success
+      perform_propagation if params[:propagate] == '1'
       respond_with @permission do |format|
         format.html do
           flash[:success] = 'Updated'
@@ -41,25 +53,19 @@ class PermissionsController < AccessController
 
   def destroy
     #@permission = Permission.find_by_id params[:id]
+    if params[:propagate] == '1' && !can_propagate
+      return
+    end
     unless @permission && @permission.destroy
       forbidden_response msg: @permission.errors[:base].join('\n')
+    end
+    if params[:propagate] == '1'
+      perform_delete_propagation
     end
   end
 
   def propagate
-    @permission.task.descendants.each do |t|
-      p = t.permissions.find_by user_id: @permission.user_id
-      # TODO: figure out a less verbose method of copying!
-      if p
-        p.owner = @permission.owner
-        p.editor = @permission.editor
-        p.viewer = @permission.viewer
-        p.save!
-      else
-        t.permissions.create!(user_id: @permission.user_id, owner: @permission.owner,
-                              editor: @permission.editor, viewer: @permission.viewer)
-      end
-    end
+    perform_propagation
   end
 
   private
@@ -88,9 +94,41 @@ class PermissionsController < AccessController
   end
 
   def can_propagate
-    @permission = Permission.find params[:id]
-    unless current_user.owns_descendants? @permission.task
-      forbidden_response(msg: 'Must own all descendants.', force_403: true)
+    if params[:id]
+      @permission = Permission.find params[:id]
+      @task = @permission.task
+    else
+      @task = Task.find permission_params[:task_id]
+    end
+
+    if current_user.owns_descendants? @task
+      true
+    else
+      forbidden_response(msg: 'Must own all descendants to propagate.', force_403: true)
+      false
+    end
+  end
+
+  def perform_propagation
+    @permission.task.descendants.each do |t|
+      p = t.permissions.find_by user_id: @permission.user_id
+      # TODO: figure out a less verbose method of copying!
+      if p
+        p.owner = @permission.owner
+        p.editor = @permission.editor
+        p.viewer = @permission.viewer
+        p.save!
+      else
+        t.permissions.create!(user_id: @permission.user_id, owner: @permission.owner,
+                              editor: @permission.editor, viewer: @permission.viewer)
+      end
+    end
+  end
+
+  def perform_delete_propagation
+    @task.descendants.each do |t|
+      p = t.permissions.find_by user_id: @permission.user_id
+      p.destroy! if p
     end
   end
 

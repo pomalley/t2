@@ -39,16 +39,37 @@
     <%= form_for(permission,
                html: { method: :delete },
                remote: true, class: 'permission-remove') do |f| %>
+      <%= hidden_field_tag 'propagate', 'false' %>
       <%= f.submit 'remove', class: 'btn btn-warning permission-remove' %>
     <% end %>
   <% else %>
     <%= form_for(permission, remote: true) do |f| %>
       <%= f.submit 'create', class: 'btn btn-success permission-create' %>
       <%= f.hidden_field :task_id %>
-          <%= f.hidden_field :user_id %>
-          <%= f.hidden_field :owner %>
-          <%= f.hidden_field :editor %>
-          <%= f.hidden_field :viewer %>
+      <%= f.hidden_field :user_id %>
+      <%= f.hidden_field :owner %>
+      <%= f.hidden_field :editor %>
+      <%= f.hidden_field :viewer %>
+      <%= hidden_field_tag 'propagate', 'false' %>
     <% end %>
+  <% end %>
+</td>
+<td>
+  <% if permission.user %>
+    <%= check_box_tag('propagate',  # id
+                      'propagate permission to children',  # value
+                      permission.matches_descendants?,  # checked
+                      disabled: !current_user.owns_descendants?(permission.task),
+                      data: { id: permission.id, url: propagate_permission_path(permission) },
+                      class: %w(propagate_existing propagate)
+        )
+    %>
+  <% else %>
+    <%= check_box_tag('propagate', 'propagate permission to children',
+                      current_user.owns_descendants?(permission.task),
+                      disabled: !current_user.owns_descendants?(permission.task),
+                      class: %w(propagate_new propagate)
+        )
+    %>
   <% end %>
 </td>

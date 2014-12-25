@@ -12,6 +12,13 @@ class Permission < ActiveRecord::Base
   before_destroy :prevent_orphan
   after_destroy  :maintain_owner
 
+  def matches_descendants?
+    task.descendants.all? do |t|
+      p = t.permissions.find_by(user_id: self.user_id)
+      !p.nil? && p.owner == self.owner && p.editor == self.editor && p.viewer == self.viewer
+    end
+  end
+
   private
   def prevent_orphan
     if task.permissions.count < 2
@@ -36,4 +43,5 @@ class Permission < ActiveRecord::Base
       errors.add(:base, 'Must have one owner.')
     end
   end
+
 end

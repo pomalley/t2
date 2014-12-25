@@ -3,6 +3,24 @@
 // You can use CoffeeScript in this file: http://coffeescript.org/
 
 
+function getNotifiers($it) {
+    var $throbber = $it.parentsUntil('tr').siblings().find('.permission-throbber');
+    var $success = $throbber.siblings('.permission-success');
+    var $failure = $throbber.siblings('.permission-failure');
+    var $failureText = $throbber.siblings('.permission-failure-text');
+    return {
+        throbber: $throbber,
+        success: $success,
+        failure: $failure,
+        failureText: $failureText
+    };
+}
+
+function propagateChecked($it) {
+    var $propCheckbox = $it.parentsUntil('tr').parent().find('.propagate');
+    return $propCheckbox.is(':checked') ? '1' : '0';
+}
+
 function permissionsReady() {
     var $parent = $('#permission');
     var $role = $parent.find('#role');
@@ -23,16 +41,27 @@ function permissionsReady() {
        $parent.find('#permission_user_id').attr('value', $user.val());
     });
 
+    // same for propagate
+    var $propChecks = $('.propagate');
+    $propChecks.click(function() {
+        var $this = $(this);
+        $this.parentsUntil('tr').parent().find('#propagate').attr('value', propagateChecked($this));
+    });
+    $propChecks.each(function() {
+        $(this).triggerHandler('click');
+    });
+
     // changing an existing role gets its own AJAX request
     $('.existing-role').change( function() {
         var $this = $(this);
         var owner = $this.val() == 1;
         var editor = $this.val() == 2;
         var viewer = $this.val() == 3;
-        var $throbber = $this.parentsUntil('tr').siblings().find('.permission-throbber');
-        var $success = $throbber.siblings('.permission-success');
-        var $failure = $throbber.siblings('.permission-failure');
-        var $failureText = $throbber.siblings('.permission-failure-text');
+        var notes = getNotifiers($this);
+        var $throbber = notes.throbber;
+        var $success = notes.success;
+        var $failure = notes.failure;
+        var $failureText = notes.failureText;
         $throbber.show();
         $success.hide();
         $failure.hide();
@@ -41,7 +70,9 @@ function permissionsReady() {
             type: 'PATCH',
             url: $this.data('url'),
             dataType: 'json',
-            data: { permission: { owner: owner, viewer: viewer, editor: editor} }
+            data: { permission: { owner: owner, viewer: viewer, editor: editor},
+                    propagate: propagateChecked($this)
+            }
         }).success(function() {
             $throbber.hide();
             $success.show();
@@ -61,8 +92,9 @@ function permissionsReady() {
     // actually the remove form, not edit
     $('.edit_permission').add('.new_permission').on('ajax:error', function(xhr, b) {
         var $this = $(this);
-        var $failure = $this.parentsUntil('tr').siblings().find('.permission-failure');
-        var $failureText = $failure.siblings('.permission-failure-text');
+        var notes = getNotifiers($this);
+        var $failure = notes.failure;
+        var $failureText = notes.failureText;
         $failure.siblings('.permission-throbber').hide();
         $failure.show();
         $failureText.html('<br>' + b.responseText).show();
@@ -73,6 +105,31 @@ function permissionsReady() {
     }).on('ajax:beforeSend', function() {
         $(this).parentsUntil('tr').siblings().find('.permission-throbber').show();
     });
+
+    /** propagate checkbox: propagate this permission on click **/
+    $('.propagate_existing').click(function() {
+        var $this = $(this);
+        if ($this.is(':checked')) {
+            var notes = getNotifiers($this);
+            notes.throbber.show();
+            $.ajax({
+                type: 'PATCH',
+                url: $this.data('url'),
+                datatype: 'json'
+            }).success(function() {
+                notes.throbber.hide();
+                notes.success.show();
+                notes.success.fadeOut(3000);
+            }).error(function(jqXHR, b) {
+                notes.throbber.hide();
+                notes.failure.show();
+                notes.failureText.html('<br>' + b.responseText).show();
+                notes.failure.fadeOut(3000);
+                notes.failureText.fadeOut(3000);
+            });
+        }
+    });
+
 }
 
 $(document).ready(permissionsReady);

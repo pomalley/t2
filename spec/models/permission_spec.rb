@@ -28,6 +28,16 @@ describe Permission do
     it { should_not be_valid }
   end
 
+  describe 'matches descendants' do
+    before {
+      task.save!
+      task.children.create!(title: 'child task')
+    }
+    let(:perm2) { task.permissions.create!(user: editor, editor: true) }
+    specify { task.permissions.first.matches_descendants?.should be_true }
+    specify { perm2.matches_descendants?.should be_false }
+  end
+
   describe 'user relations' do
     before {
       task.save!

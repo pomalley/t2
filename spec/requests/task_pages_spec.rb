@@ -90,20 +90,23 @@ describe 'Task pages' do
     # this doesn't work b/c javascript won't work
     pending 'figure out how to test js'
     # it 'should create permission with js' do
-    #   expect {
-    #     page.find('#permission').select user3.name, from: 'user'
-    #     page.find('#permission').select 'Editor', from: 'role'
-    #     page.find('#new_permission').find('input[type~=submit]')
-    #   }.to change(task.permissions, :count).by(1)
+    #    expect {
+    #      page.find('#permission').select user3.name, from: 'user'
+    #      page.find('#permission').select 'Editor', from: 'role'
+    #      page.find('#new_permission').find('input[type~=submit]').click
+    #      task.reload
+    #    }.to change{user3.editor? task}.from(false).to(true)
     # end
     # it 'should delete permission with js' do
     #   expect {
-    #     page.find("#permission_#{perm.id}").find('input[type~=submit]')
+    #     page.find("#permission_#{perm.id}").find('input[type~=submit]').click
+    #     task.reload
     #   }.to change(task.permissions, :count).by(-1)
     # end
     # it 'should change permission with js' do
     #   expect {
     #     page.find("#permission_#{perm.id}").select 'Viewer', from: 'role'
+    #     perm.reload
     #   }.to change(perm, :viewer)
     # end
   end
@@ -171,6 +174,36 @@ describe 'Task pages' do
       before { click_button 'Create' }
       it { should have_content 'Task created' }
     end
+  end
+
+  describe 'Issue 2: propagate option' do
+    before do
+      visit task_path(task)
+    end
+    let(:perm_owner) { task.permissions.first }
+    specify { find("#propagate[data-id=\"#{perm_owner.id}\"]").should be_checked }
+    specify { find("#propagate[data-id=\"#{perm.id}\"]").should_not be_checked }
+
+    describe 'New permission with button checked or not' do
+      before do
+        page.find('#permission').select user3.name, from: 'user'
+        page.find('#permission').select 'Editor', from: 'role'
+      end
+      it 'should appropriately create permissions on children' do
+        expect {
+          page.find('#new_permission').find('input[type~=submit]').click
+        }.to change{user3.editor? task.children.first}.from(false).to(true)
+        expect {
+          page.find('#new_permission').find('input[type~=checkbox]').click
+          page.find('#new_permission').find('input[type~=submit]').click
+        }.not_to change{user3.editor? task.children.first}.from(false)
+        expect {
+          page.find('#new_permission').find('input[type~=checkbox]').click
+          page.find('#new_permission').find('input[type~=submit]').click
+        }.to change{user3.editor? task}.from(false).to(true)
+      end
+    end
+
   end
 
 end
