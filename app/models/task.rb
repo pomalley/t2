@@ -97,7 +97,8 @@ class Task < ActiveRecord::Base
     end
     
     def set_visible
-        self.visible = self.status != 'retired'
+      self.visible = self.status != 'retired'
+      true
     end
     
     def markdown(text)
