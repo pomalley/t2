@@ -39,6 +39,16 @@ describe 'Static pages' do
           expect(page).to have_selector("li##{shared.id}", text: shared.title)
         end
       end
+
+      describe 'Issue #7: task retirement' do
+        let(:child_id) { user.tasks.first.children.first.id }
+        it 'should allow task retirement' do
+          page.should have_selector("li##{child_id}", visible: true)
+          page.find("#retire_form_#{child_id} button").click
+          page.should have_no_selector("li##{child_id}", visible: true)
+          Task.find(child_id).status.should eq 'retired'
+        end
+      end
     end
   end
 
