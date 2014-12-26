@@ -26,6 +26,7 @@ group :test do
   gem 'factory_girl_rails', '4.2.1'
   gem 'capybara-webkit'
   gem 'launchy'
+  gem 'database_cleaner'
 end
 
 gem 'sass-rails', '4.0.1'
