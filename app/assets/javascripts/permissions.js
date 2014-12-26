@@ -67,7 +67,7 @@ function permissionsReady() {
         $failure.hide();
         $failureText.hide();
         $.ajax({
-            type: 'PATCH',
+            type: 'PUT',
             url: $this.data('url'),
             dataType: 'json',
             data: { permission: { owner: owner, viewer: viewer, editor: editor},

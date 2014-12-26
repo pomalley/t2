@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-Capybara.javascript_driver = :webkit
+Capybara.javascript_driver = :webkit#_debug
 
 describe 'Task pages' do
 
@@ -87,43 +87,46 @@ describe 'Task pages' do
       end
     end
 
-    # this doesn't work b/c javascript won't work
-    pending 'figure out how to test js'
-    # it 'should create permission with js' do
-    #    expect {
-    #      page.find('#permission').select user3.name, from: 'user'
-    #      page.find('#permission').select 'Editor', from: 'role'
-    #      page.find('#new_permission').find('input[type~=submit]').click
-    #      task.reload
-    #    }.to change{user3.editor? task}.from(false).to(true)
-    # end
-    # it 'should delete permission with js' do
-    #   expect {
-    #     page.find("#permission_#{perm.id}").find('input[type~=submit]').click
-    #     task.reload
-    #   }.to change(task.permissions, :count).by(-1)
-    # end
-    # it 'should change permission with js' do
-    #   expect {
-    #     page.find("#permission_#{perm.id}").select 'Viewer', from: 'role'
-    #     perm.reload
-    #   }.to change(perm, :viewer)
-    # end
-  end
-  
-  describe 'as wrong user' do
-    before do
-      sign_in user, no_capybara: true
-      get task_path(task2)
+    describe 'permission AJAX crud', js: true do
+      it 'should create permission with js' do
+        expect(user3).not_to be_editor task
+        page.find('#permission').select user3.name, from: 'user'
+        page.find('#permission').select 'Editor', from: 'role'
+        page.find('#new_permission').find('input[type~=submit]').click
+        # this next line should make capybara wait for js to complete
+        page.should have_selector('.permission-success', visible: true)
+        task.reload
+        user3.reload
+        expect(user3).to be_editor task
+      end
+      it 'should delete permission with js' do
+        expect(user2).to be_editor task
+        page.find("#permission_#{perm.id}").find('input[type~=submit]').click
+        # note here we use '.should have_no_selector', not '.should_not have_selector' b/c capybara+js=weird
+        page.should have_no_selector("#permission_#{perm.id}")
+        expect(user2).not_to be_viewer task
+      end
+      it 'should change permission with js' do
+        expect(user2).to be_editor task
+        page.find("#permission_#{perm.id}").select 'Viewer', from: 'role'
+        page.should have_selector('.permission-success', visible: true)
+        expect(user2).not_to be_editor task
+        expect(user2).to be_viewer task
+      end
     end
-    
-    specify { expect(response).to redirect_to(root_url) }
+  end
+
+  describe 'as wrong user' do
+    it 'should redirect to root' do
+      visit task_path(task2)
+      current_path.should == root_path
+      #expect(response).to redirect_to(root_url)
+    end
   end
 
   describe 'with view permissions' do
     before do
       task2.permissions.create!(user: user, viewer: true)
-      sign_in user#, no_capybara: true
       visit task_path(task2)
     end
 
@@ -136,7 +139,6 @@ describe 'Task pages' do
   describe 'with editor permissions' do
     before do
       task2.permissions.create!(user: user, editor: true)
-      sign_in user#, no_capybara: true
       visit task_path(task2)
     end
 
@@ -149,7 +151,6 @@ describe 'Task pages' do
   describe 'with owner permissions' do
     before do
       task2.permissions.create!(user: user, owner: true)
-      sign_in user#, no_capybara: true
       visit task_path(task2)
     end
 
@@ -176,31 +177,37 @@ describe 'Task pages' do
     end
   end
 
-  describe 'Issue 2: propagate option' do
+  describe 'Issue 2: propagate option', js: true do
     before do
+      sign_in user
+      #print 'remember_token: "'
+      #print page.driver.cookies['remember_token']
+      #print '"'
+      #print 'session: "'
+      #print page.driver.cookies['_t2_session']
       visit task_path(task)
     end
     let(:perm_owner) { task.permissions.first }
     specify { find("#propagate[data-id=\"#{perm_owner.id}\"]").should be_checked }
     specify { find("#propagate[data-id=\"#{perm.id}\"]").should_not be_checked }
 
-    describe 'New permission with button checked or not' do
+    describe 'New permission propagation' do
       before do
         page.find('#permission').select user3.name, from: 'user'
         page.find('#permission').select 'Editor', from: 'role'
+        #save_and_open_page
       end
-      it 'should appropriately create permissions on children' do
-        expect {
-          page.find('#new_permission').find('input[type~=submit]').click
-        }.to change{user3.editor? task.children.first}.from(false).to(true)
-        expect {
-          page.find('#new_permission').find('input[type~=checkbox]').click
-          page.find('#new_permission').find('input[type~=submit]').click
-        }.not_to change{user3.editor? task.children.first}.from(false)
-        expect {
-          page.find('#new_permission').find('input[type~=checkbox]').click
-          page.find('#new_permission').find('input[type~=submit]').click
-        }.to change{user3.editor? task}.from(false).to(true)
+      it 'should appropriately create permissions on children when checked' do
+        page.find('#new_permission').find('input[type~=submit]').click
+        page.should have_selector('.permission-success', visible: true)
+        expect(user3).to be_editor task.children.first
+      end
+      it 'should not create perms on children when not checked' do
+        page.find('#permission').find('input[type~=checkbox]').click
+        page.find('#new_permission').find('input[type~=submit]').click
+        page.should have_selector('.permission-success', visible: true)
+        expect(user3).not_to be_editor task.children.first
+        expect(user3).to be_editor task
       end
     end
 

@@ -76,7 +76,7 @@ describe Task do
       it 'should have parent owner as owner' do
         user.should be_owner @child1
       end
-      its(:users) { should eq(@task.users) }
+      its(:users) { should =~ @task.users }
       it 'should match parent permissions' do
         @child1.users.each do |u|
           expect(u.owner? @task).to eq(u.owner? @child1)
