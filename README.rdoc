@@ -1,28 +1,13 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+t2 is a simple task-list web application based on the most
+excellent "Ruby on Rails Tutorial" by Michael Hartl, available 
+at https://www.railstutorial.org/book.
 
-Things you may want to cover:
+I went through the tutorial, and afterwards hacked it from the
+Twitter-like site the tutorial builds into its current form.
+I make no promises as to efficiency, correctness, or (most
+importantly) security.
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+For those of you keeping score at home, note that this was 
+done with an earlier version of the tutorial.
